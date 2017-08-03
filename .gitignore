@@ -1,0 +1,14 @@
+client/npm-debug.log
+client/node_modules
+server/**/*.js
+server/**/*.js.map
+client/build
+client/.idea
+client/*.iml
+
+server/npm-debug.log
+server/node_modules
+server/**/*.js
+server/**/*.js.map
+server/.idea
+server/*.iml

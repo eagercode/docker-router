@@ -1,0 +1,10 @@
+./client/npm-debug.log
+./client/node_modules
+./client/build
+./client/.idea
+./client/*.iml
+
+./server/npm-debug.log
+./server/node_modules
+./server/.idea
+./server/*.iml

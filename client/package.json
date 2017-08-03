@@ -1,0 +1,31 @@
+{
+  "name": "docker-router-client",
+  "description": "Docker router client",
+  "author": "Eager Code",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eagercode/docker-router.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eagercode/docker-router/issues"
+  },
+  "homepage": "https://github.com/eagercode/docker-router#readme",
+  "devDependencies": {
+    "@types/jest": "^20.0.6",
+    "@types/node": "^8.0.19",
+    "@types/react": "^16.0.0",
+    "@types/react-dom": "^15.5.2"
+  },
+  "dependencies": {
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-scripts-ts": "2.5.0"
+  },
+  "scripts": {
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject"
+  }
+}
