@@ -7,10 +7,6 @@
     "type": "git",
     "url": "git+https://github.com/eagercode/docker-router.git"
   },
-  "bugs": {
-    "url": "https://github.com/eagercode/docker-router/issues"
-  },
-  "homepage": "https://github.com/eagercode/docker-router#readme",
   "devDependencies": {
     "@types/jest": "^20.0.6",
     "@types/node": "^8.0.19",
