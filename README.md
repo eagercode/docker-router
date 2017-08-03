@@ -1,4 +1,4 @@
-## Virtual Host Router
+## Docker Virtual Host Router
 
 Router will help to maintain virtual hosts in Docker.
 
