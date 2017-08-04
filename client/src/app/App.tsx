@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Container from '../components/container/Container';
 import './App.css';
 
 class App extends React.Component<{}, {}> {
@@ -8,6 +9,7 @@ class App extends React.Component<{}, {}> {
                 <div className="App-header">
                     <h2>Docker Router</h2>
                 </div>
+                <Container/>
             </div>
         );
     }
