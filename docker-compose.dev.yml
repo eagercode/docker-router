@@ -1,0 +1,7 @@
+version: '3'
+services: 
+  web:
+    entrypoint: ["npm", "run", "start-dev"]
+    volumes:
+     - ./client/build:/app/public
+     - ./server:/app/server
