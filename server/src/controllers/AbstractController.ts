@@ -1,6 +1,4 @@
-'use strict';
-
-import {Application} from "express-serve-static-core";
+import {Application} from 'express-serve-static-core';
 
 export abstract class AbstractController {
 

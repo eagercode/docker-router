@@ -1,9 +1,7 @@
-'use strict';
+import { Application, Request, Response } from 'express-serve-static-core';
 
-import {Application, Request, Response} from "express-serve-static-core";
-
-import Constants from "./common/Constants";
 import ContainerController from './controllers/ContainerController';
+import Constants from './common/Constants';
 
 const path = require('path');
 const express = require('express');
@@ -16,8 +14,7 @@ app.use(express.static(Constants.PUBLIC_DIR));
 
 new ContainerController(app);
 
-app.get('*', function (request: Request, response: Response) {
-    response.sendFile(path.resolve(Constants.PUBLIC_DIR, 'index.html'));
-});
+app.get('*', (request: Request, response: Response) =>
+    response.sendFile(path.resolve(Constants.PUBLIC_DIR, 'index.html')));
 
 app.listen(Constants.SERVER_PORT);
