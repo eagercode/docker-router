@@ -20,6 +20,7 @@ RUN cp -r /tmp/app/client/build /app/public
 WORKDIR /app/server
 RUN npm install
 RUN npm run compile
+RUN npm test
 
 WORKDIR /app/server
 EXPOSE 8000

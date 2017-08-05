@@ -5,7 +5,7 @@
   "rules": {
     "max-line-length": [
       true,
-      120
+      250
     ],
     "ter-indent": [
       true,
