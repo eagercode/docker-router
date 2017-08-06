@@ -3,7 +3,6 @@ import { SinonStub } from 'sinon';
 import CliService from '../../../src/services/CliService';
 import Container from '../../../src/model/Container';
 import ContainerBuilder from '../../builders/ContainerBuilder';
-import ContainerConverter from '../../../src/converters/ContainerConverter';
 import DockerService from '../../../src/services/DockerService';
 
 const sinon = require('sinon');
