@@ -2,7 +2,6 @@ import { SinonStub } from 'sinon';
 
 import CliService from '../../../src/services/CliService';
 import Container from '../../../src/model/Container';
-import ContainerBuilder from '../../builders/ContainerBuilder';
 import DockerService from '../../../src/services/DockerService';
 
 const sinon = require('sinon');
@@ -21,10 +20,16 @@ describe('DockerService', () => {
 
         it('shell command `docker ps` should be executed', () => {
             const stub: SinonStub = sinon.stub(cliService, 'exec');
-            stub.returns(Promise.resolve('First container\nSecond container'));
+            const containersStr: string = [
+                'CONTAINER ID IMAGE     COMMAND   CREATED   STATUS   PORTS    NAMES',
+                'id_1         image_1   command_1 created_1 status_1 ports_1  longer_name_1',
+                'id_2         image_2   command_2 created_2 status_2 ports_2  name_2',
+                '',
+            ].join('\n');
+            stub.returns(Promise.resolve(containersStr));
             const expectedResult: Container[] = [
-                new ContainerBuilder().withTitle('First container').build(),
-                new ContainerBuilder().withTitle('Second container').build(),
+                new Container('id_1', 'image_1', 'command_1', 'created_1', 'status_1', 'ports_1', 'longer_name_1'),
+                new Container('id_2', 'image_2', 'command_2', 'created_2', 'status_2', 'ports_2', 'name_2'),
             ];
 
             const result: Promise<Container[]> = service.ps();

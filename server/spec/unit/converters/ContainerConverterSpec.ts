@@ -1,5 +1,4 @@
 import Container from '../../../src/model/Container';
-import ContainerBuilder from '../../builders/ContainerBuilder';
 import ContainerConverter from '../../../src/converters/ContainerConverter';
 
 describe('ContainerConverter', () => {
@@ -11,18 +10,25 @@ describe('ContainerConverter', () => {
     describe('convertOne', () => {
 
         it('container string is null', () => {
-            const containerInfo: string = null;
+            let result: Container = converter.convertOne(null, null);
 
-            const result: Container = converter.convertOne(containerInfo);
+            expect(result).toBeNull();
+
+            result = converter.convertOne('Header', null);
+
+            expect(result).toBeNull();
+
+            result = converter.convertOne(null, 'Container info');
 
             expect(result).toBeNull();
         });
 
         it('string is container info', () => {
-            const containerInfo: string = 'Container info';
-            const expectedResult: Container = new Container(containerInfo);
+            const headerStr: string = 'ID   IMAGE     COMMAND     CREATED     STATUS   PORTS    NAMES';
+            const containerStr: string = '1    image_1   command_1   created_1   status_1 ports_1  longer_name_1';
+            const expectedResult: Container = new Container('1', 'image_1', 'command_1', 'created_1', 'status_1', 'ports_1', 'longer_name_1');
 
-            const result: Container = converter.convertOne(containerInfo);
+            const result: Container = converter.convertOne(headerStr, containerStr);
 
             expect(result).toEqual(expectedResult);
         });
@@ -37,13 +43,18 @@ describe('ContainerConverter', () => {
         });
 
         it('string is list of containers', () => {
-            const str: string = 'First container\nSecond container';
+            const containersStr: string = [
+                'CONTAINER ID IMAGE     COMMAND   CREATED   STATUS   PORTS    NAMES',
+                '1            image_1   command_1 created_1 status_1 ports_1  n1',
+                '2            image_2   command_2 created_2 status_2 ports_2  name_2',
+                '',
+            ].join('\n');
             const expectedResult: Container[] = [
-                new ContainerBuilder().withTitle('First container').build(),
-                new ContainerBuilder().withTitle('Second container').build(),
+                new Container('1', 'image_1', 'command_1', 'created_1', 'status_1', 'ports_1', 'n1'),
+                new Container('2', 'image_2', 'command_2', 'created_2', 'status_2', 'ports_2', 'name_2'),
             ];
 
-            const result: Container[] = converter.convertList(str);
+            const result: Container[] = converter.convertList(containersStr);
 
             expect(result).toEqual(expectedResult);
         });

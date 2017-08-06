@@ -1,5 +1,4 @@
 import Container from '../../../src/model/Container';
-import ContainerBuilder from '../../builders/ContainerBuilder';
 import ContainerController from '../../../src/controllers/ContainerController';
 import DockerService from '../../../src/services/DockerService';
 
@@ -18,8 +17,8 @@ describe('ContainerController', () => {
     describe('getAll', () => {
         it('returns list of containers', (done) => {
             const expectedResult: Container[] = [
-                new ContainerBuilder().withTitle('First container').build(),
-                new ContainerBuilder().withTitle('Second container').build(),
+                new Container('1', 'image_1', 'command_1', 'created_1', 'status_1', 'ports_1', 'n_1'),
+                new Container('2', 'image_2', 'command_2', 'created_2', 'status_2', 'ports_2', 'container_name_2'),
             ];
             sinon.stub(dockerService, 'ps').returns(Promise.resolve(expectedResult));
 

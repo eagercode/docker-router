@@ -14,7 +14,7 @@ export default class ContainerController {
         }
     }
 
-    getAll(request: Request, response: Response): void {
+    getAll = (request: Request, response: Response): void => {
         this.dockerService.ps()
             .then((containers: Container[]) => response.send(containers))
             .catch((error: string): void => {
