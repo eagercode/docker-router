@@ -22,7 +22,7 @@ export default class ContainerBox extends React.Component<{}, State> {
     load(): void {
         Utils.ajaxGet(Constants.REST_API_PREFIX + '/container/').then((result: Container[]) => {
             this.setState({
-                title: result[0].title
+                title: result[0].id + ' ' + result[0].image + ' ' + result[0].name
             });
         }).catch((err: {}) => this.setState({errors: err}));
     }
