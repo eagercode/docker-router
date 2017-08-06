@@ -1,7 +1,7 @@
 import { Application, Request, Response } from 'express-serve-static-core';
 
-import ContainerController from './controllers/ContainerController';
 import Constants from './common/Constants';
+import ContainerController from './controllers/ContainerController';
 
 const path = require('path');
 const express = require('express');
@@ -12,7 +12,7 @@ const app: Application = express();
 app.use(bodyParser.json());
 app.use(express.static(Constants.PUBLIC_DIR));
 
-ContainerController.init(app);
+new ContainerController(app);
 
 app.get('*', (request: Request, response: Response) =>
     response.sendFile(path.resolve(Constants.PUBLIC_DIR, 'index.html')));

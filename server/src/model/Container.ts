@@ -1,6 +1,5 @@
 export default class Container {
 
-    constructor(public title: string) {
+    constructor(public title?: string) {
     }
-
 }
