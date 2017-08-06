@@ -20,11 +20,8 @@ describe('DockerService', () => {
     describe('ps', () => {
 
         it('shell command `docker ps` should be executed', () => {
-            const mockResult: Promise<string> = new Promise<string>((resolve: (containers: string) => void): void => {
-                resolve('First container\nSecond container');
-            });
             const stub: SinonStub = sinon.stub(cliService, 'exec');
-            stub.returns(mockResult);
+            stub.returns(Promise.resolve('First container\nSecond container'));
             const expectedResult: Container[] = [
                 new ContainerBuilder().withTitle('First container').build(),
                 new ContainerBuilder().withTitle('Second container').build(),
