@@ -4,7 +4,7 @@ import ContainerConverter from '../converters/ContainerConverter';
 
 export default class DockerService {
 
-    constructor(private cliService: CliService, private containerConverter: ContainerConverter) {
+    constructor(private cliService: CliService = new CliService(), private containerConverter: ContainerConverter = new ContainerConverter()) {
     }
 
     ps(): Promise<Container[]> {

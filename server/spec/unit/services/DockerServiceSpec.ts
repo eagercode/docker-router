@@ -15,7 +15,7 @@ describe('DockerService', () => {
 
     beforeEach(() => {
         cliService = new CliService();
-        service = new DockerService(cliService, new ContainerConverter());
+        service = new DockerService(cliService);
     });
 
     describe('ps', () => {
