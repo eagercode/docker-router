@@ -31,5 +31,22 @@ describe('ContainerController', () => {
 
             controller.getAll(null, response);
         });
+
+        it('returns system error', (done) => {
+            const error: string = 'System error';
+            sinon.stub(dockerService, 'ps').returns(Promise.reject(error));
+
+            const send = (err: {}) => {
+                expect(err).toEqual({ error });
+                done();
+            };
+            const status = (httpStatus: number) => {
+                expect(httpStatus).toBe(500);
+                return { send };
+            };
+
+            const response: any = { status };
+            controller.getAll(null, response);
+        });
     });
 });
