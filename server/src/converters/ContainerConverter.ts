@@ -5,7 +5,8 @@ export default class ContainerConverter {
     convertOne(headerStr: string, containerStr: string): Container {
         if (headerStr && containerStr) {
             const args: string[] = this.convertContainerStrToArray(headerStr, containerStr);
-            return new Container(args[0] || null, args[1] || null, args[2] || null, args[3] || null, args[4] || null, args[5] || null, args[6] || null);
+            const isActive: boolean = args[4] ? args[4].indexOf('Up') > -1 : false;
+            return new Container(args[0] || '', args[1] || '', args[2] || '', args[3] || '', args[4] || '', args[5] || '', args[6] || '', isActive);
         } else {
             return null;
         }

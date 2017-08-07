@@ -23,10 +23,20 @@ describe('ContainerConverter', () => {
             expect(result).toBeNull();
         });
 
-        it('string is container info', () => {
-            const headerStr: string = 'ID   IMAGE     COMMAND     CREATED     STATUS   PORTS    NAMES';
-            const containerStr: string = '1    image_1   command_1   created_1   status_1 ports_1  longer_name_1';
-            const expectedResult: Container = new Container('1', 'image_1', 'command_1', 'created_1', 'status_1', 'ports_1', 'longer_name_1');
+        it('active container info', () => {
+            const headerStr: string =    'CONTAINER ID        IMAGE               COMMAND               CREATED             STATUS              PORTS                    NAMES';
+            const containerStr: string = '10554ce91a88        dockerrouter_web    "npm run start-dev"   28 hours ago        Up 11 minutes       0.0.0.0:8000->8000/tcp   dockerrouter_web_1';
+            const expectedResult: Container = new Container('10554ce91a88', 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Up 11 minutes', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', true);
+
+            const result: Container = converter.convertOne(headerStr, containerStr);
+
+            expect(result).toEqual(expectedResult);
+        });
+
+        it('stopped container info', () => {
+            const headerStr: string =    'CONTAINER ID        IMAGE               COMMAND                   CREATED             STATUS                         PORTS            NAMES';
+            const containerStr: string = 'e7b316865c96        0cde913b8078        "npm run start-dev"       4 days ago          Exited (127) 4 days ago                         zen_spence';
+            const expectedResult: Container = new Container('e7b316865c96', '0cde913b8078', '"npm run start-dev"', '4 days ago', 'Exited (127) 4 days ago', '', 'zen_spence', false);
 
             const result: Container = converter.convertOne(headerStr, containerStr);
 
@@ -44,14 +54,14 @@ describe('ContainerConverter', () => {
 
         it('string is list of containers', () => {
             const containersStr: string = [
-                'CONTAINER ID IMAGE     COMMAND   CREATED   STATUS   PORTS    NAMES',
-                '1            image_1   command_1 created_1 status_1 ports_1  n1',
-                '2            image_2   command_2 created_2 status_2 ports_2  name_2',
+                'CONTAINER ID        IMAGE               COMMAND               CREATED             STATUS                       PORTS                    NAMES',
+                'e7b316865c96        0cde913b8078        "npm run start-dev"   4 days ago          Exited (127) 4 days ago                               zen_spence',
+                '10554ce91a88        dockerrouter_web    "npm run start-dev"   28 hours ago        Up 11 minutes                0.0.0.0:8000->8000/tcp   dockerrouter_web_1',
                 '',
             ].join('\n');
             const expectedResult: Container[] = [
-                new Container('1', 'image_1', 'command_1', 'created_1', 'status_1', 'ports_1', 'n1'),
-                new Container('2', 'image_2', 'command_2', 'created_2', 'status_2', 'ports_2', 'name_2'),
+                new Container('e7b316865c96', '0cde913b8078', '"npm run start-dev"', '4 days ago', 'Exited (127) 4 days ago', '', 'zen_spence', false),
+                new Container('10554ce91a88', 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Up 11 minutes', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', true),
             ];
 
             const result: Container[] = converter.convertList(containersStr);
