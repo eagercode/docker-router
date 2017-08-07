@@ -7,6 +7,7 @@ export default class Container {
         public created?: string,
         public status?: string,
         public ports?: string,
-        public name?: string) {
+        public name?: string,
+        public isActive?: boolean) {
     }
 }
