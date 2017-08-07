@@ -17,10 +17,10 @@ describe('ContainerController', () => {
     describe('getAll', () => {
         it('returns list of containers', (done) => {
             const expectedResult: Container[] = [
-                new Container('1', 'image_1', 'command_1', 'created_1', 'status_1', 'ports_1', 'n_1'),
-                new Container('2', 'image_2', 'command_2', 'created_2', 'status_2', 'ports_2', 'container_name_2'),
+                new Container('e7b316865c96', '0cde913b8078', '"npm run start-dev"', '4 days ago', 'Exited (127) 4 days ago', '', 'zen_spence', false),
+                new Container('10554ce91a88', 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Up 11 minutes', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', true),
             ];
-            sinon.stub(dockerService, 'ps').returns(Promise.resolve(expectedResult));
+            sinon.stub(dockerService, 'psAll').returns(Promise.resolve(expectedResult));
 
             const send = (containers: Container[]) => {
                 expect(containers).toEqual(expectedResult);
@@ -33,7 +33,7 @@ describe('ContainerController', () => {
 
         it('returns system error', (done) => {
             const error: string = 'System error';
-            sinon.stub(dockerService, 'ps').returns(Promise.reject(error));
+            sinon.stub(dockerService, 'psAll').returns(Promise.reject(error));
 
             const send = (err: {}) => {
                 expect(err).toEqual({ error });

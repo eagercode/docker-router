@@ -23,6 +23,31 @@ describe('DockerService', () => {
             const containersStr: string = [
                 'CONTAINER ID        IMAGE               COMMAND               CREATED             STATUS                       PORTS                    NAMES',
                 'e7b316865c96        0cde913b8078        "npm run start-dev"   4 days ago          Exited (127) 4 days ago                               zen_spence',
+                '10554ce91a88        dockerrouter_web    "npm run start-dev"   28 hours ago        Exited (137) 2 months ago    0.0.0.0:8000->8000/tcp   dockerrouter_web_1',
+                '',
+            ].join('\n');
+            const expectedResult: Container[] = [
+                new Container('e7b316865c96', '0cde913b8078', '"npm run start-dev"', '4 days ago', 'Exited (127) 4 days ago', '', 'zen_spence', false),
+                new Container('10554ce91a88', 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Exited (137) 2 months ago', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', false),
+            ];
+            stub.returns(Promise.resolve(containersStr));
+
+            const result: Promise<Container[]> = service.ps();
+
+            sinon.assert.calledWith(stub, 'docker ps');
+            result.then((containers: Container[]): void => {
+                expect(containers).toEqual(expectedResult);
+            });
+        });
+    });
+
+    describe('psAll', () => {
+
+        it('shell command `docker ps -a` should be executed', () => {
+            const stub: SinonStub = sinon.stub(cliService, 'exec');
+            const containersStr: string = [
+                'CONTAINER ID        IMAGE               COMMAND               CREATED             STATUS                       PORTS                    NAMES',
+                'e7b316865c96        0cde913b8078        "npm run start-dev"   4 days ago          Exited (127) 4 days ago                               zen_spence',
                 '10554ce91a88        dockerrouter_web    "npm run start-dev"   28 hours ago        Up 11 minutes                0.0.0.0:8000->8000/tcp   dockerrouter_web_1',
                 '',
             ].join('\n');
@@ -32,9 +57,9 @@ describe('DockerService', () => {
             ];
             stub.returns(Promise.resolve(containersStr));
 
-            const result: Promise<Container[]> = service.ps();
+            const result: Promise<Container[]> = service.psAll();
 
-            sinon.assert.calledWith(stub, 'docker ps');
+            sinon.assert.calledWith(stub, 'docker ps -a');
             result.then((containers: Container[]): void => {
                 expect(containers).toEqual(expectedResult);
             });
