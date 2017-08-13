@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Constants from '../../common/Constants';
 import Container from '../../model/Container';
 import Utils from '../../utils/Utils';
 
@@ -20,7 +19,7 @@ export default class ContainerBox extends React.Component<{}, State> {
     }
 
     load(): void {
-        Utils.ajaxGet(Constants.REST_API_PREFIX + '/container/').then((result: Container[]) => {
+        Utils.ajaxGet('/container/').then((result: Container[]) => {
             this.setState({
                 title: result[0].id + ' ' + result[0].image + ' ' + result[0].name
             });
