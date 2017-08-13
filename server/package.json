@@ -30,7 +30,7 @@
   "scripts": {
     "compile": "tsc",
     "precommit": "npm run tslint",
-    "start-dev": "nodemon -L ./src/index.js",
+    "start-development": "NODE_ENV=development nodemon -L ./src/index.js",
     "start": "node ./src/index.js",
     "test": "jasmine",
     "tslint": "tslint -p ./tslint.json"
