@@ -1,10 +1,10 @@
 .Indicator:before {
     content: ' \25CF';
     float: right;
-    font-size: 2em;
+    font-size: 1.5em;
     right: 3%;
     position: absolute;
-
+    top: 0.2em;
 }
 
 .Indicator.Indicator-green {
