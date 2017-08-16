@@ -1,14 +1,15 @@
 import * as React from 'react';
-import Dashboard from '../components/dashboard/Dashboard';
-import './App.css';
 import { AppBar } from 'material-ui';
+import Dashboard from '../components/dashboard/Dashboard';
+import GitHub from '../components/GitHub/GitHub';
+import './App.css';
 
 export default class App extends React.Component<{}, {}> {
     render() {
         return (
             <div className="App">
                 <AppBar
-                    iconElementLeft={<span/>}
+                    iconElementLeft={<GitHub/>}
                     title="Docker Router"
                 />
                 <Dashboard/>
