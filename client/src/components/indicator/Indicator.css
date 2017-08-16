@@ -1,0 +1,16 @@
+.Indicator:before {
+    content: ' \25CF';
+    float: right;
+    font-size: 35px;
+    right: 8px;
+    position: absolute;
+    top: -6px;
+}
+
+.Indicator.Indicator-green {
+    color: #4CAF50
+}
+
+.Indicator.Indicator-red {
+    color: #E53935
+}
