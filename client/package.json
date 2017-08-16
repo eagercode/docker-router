@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "material-ui": "0.18.7",
+    "normalize.css": "7.0.0",
     "react": "15.6.1",
     "react-dom": "15.6.1",
     "react-scripts-ts": "2.6.0",

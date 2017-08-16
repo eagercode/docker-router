@@ -1,35 +1,23 @@
 import * as React from 'react';
 import Container from '../../model/Container';
-import Utils from '../../utils/Utils';
+import { Paper } from 'material-ui';
 
-interface State {
+interface Props {
 
-    errors?: {};
-    title?: string;
-
+    container: Container;
 }
 
-export default class ContainerBox extends React.Component<{}, State> {
-
-    constructor(props: {}) {
-        super(props);
-
-        this.state = {};
-        this.load();
-    }
-
-    load(): void {
-        Utils.ajaxGet('/container/').then((result: Container[]) => {
-            this.setState({
-                title: result[0].id + ' ' + result[0].image + ' ' + result[0].name
-            });
-        }).catch((err: {}) => this.setState({errors: err}));
-    }
+export default class ContainerBox extends React.Component<Props, {}> {
 
     render(): JSX.Element {
         return (
             <div>
-                <h1>{this.state.title}</h1>
+                <Paper zDepth={1}>
+                    <b>ID: </b>
+                    <span>{this.props.container.id}</span>
+                    <b>Name: </b>
+                    <span>{this.props.container.name}</span>
+                </Paper>
             </div>
         );
     }
