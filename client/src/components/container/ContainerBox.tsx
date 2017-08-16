@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Container from '../../model/Container';
-import { Paper } from 'material-ui';
+import { List, ListItem } from 'material-ui';
+import './ContainerBox.css';
 
 interface Props {
 
@@ -11,13 +12,23 @@ export default class ContainerBox extends React.Component<Props, {}> {
 
     render(): JSX.Element {
         return (
-            <div>
-                <Paper zDepth={1}>
-                    <b>ID: </b>
-                    <span>{this.props.container.id}</span>
-                    <b>Name: </b>
-                    <span>{this.props.container.name}</span>
-                </Paper>
+            <div className="ContainerBox">
+                <List>
+                    <ListItem
+                        primaryText={this.props.container.name}
+                        secondaryText="Container Name"
+                    />
+                    <ListItem
+                        primaryText={this.props.container.image}
+                        secondaryText="Image"
+                    />
+                    {this.props.container.status ?
+                    <ListItem
+                        disabled={true}
+                        primaryText={this.props.container.status}
+                        secondaryText="Status"
+                    /> : ''}
+                </List>
             </div>
         );
     }

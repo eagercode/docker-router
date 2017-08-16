@@ -1,7 +1,8 @@
 import * as React from 'react';
 import Container from '../../model/Container';
-import Utils from '../../utils/Utils';
 import ContainerBox from '../container/ContainerBox';
+import Utils from '../../utils/Utils';
+import './Dashboard.css';
 
 interface State {
 
@@ -25,7 +26,7 @@ export default class Dashboard extends React.Component<{}, State> {
 
     render(): JSX.Element {
         return (
-            <div>
+            <div className="Dashboard">
                 {this.state.containers ? this.state.containers.map((container: Container) =>
                     <ContainerBox key={container.id} container={container}/>
                 ) : ''}
