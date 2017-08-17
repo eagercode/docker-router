@@ -20,8 +20,14 @@ export default class Dashboard extends React.Component<{}, State> {
     }
 
     load(): void {
-        Utils.ajaxGet('/container/').then((containers: Container[]) => this.setState({containers}))
+        Utils.ajaxGet('/container/').then((containers: Container[]) => this.setContainers(containers))
             .catch((errors: {}) => this.setState({errors}));
+    }
+
+    setContainers(containers: Container[]): void {
+        const comparator = (c1: Container, c2: Container): number => (c1.isActive === c2.isActive) ? 0 : (c1.isActive) ? -1 : 1;
+        containers = containers.sort(comparator);
+        this.setState({containers});
     }
 
     render(): JSX.Element {
