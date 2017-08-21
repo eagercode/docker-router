@@ -1,8 +1,21 @@
 version: '3'
 services: 
+  router:
+    image: nginx
+    depends_on:
+      - web
+    ports: 
+     - "80:80"
+    volumes:
+     - nginx-conf:/etc/nginx:ro
+
   web:
     build: .
     ports: 
      - "8000:8000"
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
+     - nginx-conf:/opt/router
+
+volumes:
+  nginx-conf:

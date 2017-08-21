@@ -8,9 +8,11 @@ RUN apt-get install -y docker.io
 
 RUN mkdir /app
 RUN mkdir /tmp/app
+RUN mkdir /opt/router
 
 COPY ./client /tmp/app/client
 COPY ./server /app/server
+COPY ./docker/nginx.conf /opt/router
 
 WORKDIR /tmp/app/client
 RUN npm install
