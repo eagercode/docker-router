@@ -1,5 +1,6 @@
 client/npm-debug.log
 client/node_modules
+server/access-error.log
 server/**/*.js
 server/**/*.js.map
 client/build
