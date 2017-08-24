@@ -30,7 +30,13 @@ describe('VirtualHostService', () => {
                 '        }\n' +
                 '    }';
 
-            const result: string = service.getVirtualHostDescription(virtualHost);
+            let result: string = service.getVirtualHostDescription(virtualHost);
+
+            expect(result).toBe(expectedResult);
+
+            virtualHost.address += '/';
+
+            result = service.getVirtualHostDescription(virtualHost);
 
             expect(result).toBe(expectedResult);
         });

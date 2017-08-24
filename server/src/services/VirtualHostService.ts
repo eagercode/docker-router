@@ -11,7 +11,6 @@ export default class VirtualHostService {
     }
 
     addVirtualHost(virtualHost: VirtualHost): Promise<boolean> {
-
         return Promise.resolve(true);
     }
 
@@ -28,7 +27,7 @@ export default class VirtualHostService {
         server_name ${this.getServerName(virtualHost.address)};
 
         location / {
-            proxy_pass         ${virtualHost.address};
+            proxy_pass         ${this.removeLastForwardSlash(virtualHost.address)};
             proxy_redirect     off;
             proxy_set_header   Host $host;
             proxy_set_header   X-Real-IP $remote_addr;
@@ -39,8 +38,19 @@ export default class VirtualHostService {
     }
 
     private getServerName(urlAddress: string): string {
-        const result: string = urlAddress.substring(urlAddress.indexOf('//') + 2);
-        return result[result.length - 1] === '/' ? result.substring(result.length - 1) : result;
+        if (!urlAddress) {
+            return urlAddress;
+        }
+
+        return this.removeLastForwardSlash(urlAddress.substring(urlAddress.indexOf('//') + 2));
+    }
+
+    private removeLastForwardSlash(urlAddress: string): string {
+        if (!urlAddress) {
+            return urlAddress;
+        }
+
+        return urlAddress[urlAddress.length - 1] === '/' ? urlAddress.substring(0, urlAddress.length - 1) : urlAddress;
     }
 
     private load(): void {
