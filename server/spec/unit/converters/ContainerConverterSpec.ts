@@ -7,18 +7,18 @@ describe('ContainerConverter', () => {
 
     beforeEach(() => converter = new ContainerConverter());
 
-    describe('convertOne', () => {
+    describe('strToContainer', () => {
 
         it('container string is null', () => {
-            let result: Container = converter.convertOne(null, null);
+            let result: Container = converter.strToContainer(null, null);
 
             expect(result).toBeNull();
 
-            result = converter.convertOne('Header', null);
+            result = converter.strToContainer('Header', null);
 
             expect(result).toBeNull();
 
-            result = converter.convertOne(null, 'Container info');
+            result = converter.strToContainer(null, 'Container info');
 
             expect(result).toBeNull();
         });
@@ -28,7 +28,7 @@ describe('ContainerConverter', () => {
             const containerStr: string = '10554ce91a88        dockerrouter_web    "npm run start-dev"   28 hours ago        Up 11 minutes       0.0.0.0:8000->8000/tcp   dockerrouter_web_1';
             const expectedResult: Container = new Container('10554ce91a88', 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Up 11 minutes', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', true);
 
-            const result: Container = converter.convertOne(headerStr, containerStr);
+            const result: Container = converter.strToContainer(headerStr, containerStr);
 
             expect(result).toEqual(expectedResult);
         });
@@ -38,16 +38,16 @@ describe('ContainerConverter', () => {
             const containerStr: string = 'e7b316865c96        0cde913b8078        "npm run start-dev"       4 days ago          Exited (127) 4 days ago                         zen_spence';
             const expectedResult: Container = new Container('e7b316865c96', '0cde913b8078', '"npm run start-dev"', '4 days ago', 'Exited (127) 4 days ago', '', 'zen_spence', false);
 
-            const result: Container = converter.convertOne(headerStr, containerStr);
+            const result: Container = converter.strToContainer(headerStr, containerStr);
 
             expect(result).toEqual(expectedResult);
         });
     });
 
-    describe('convertList', () => {
+    describe('strToContainers', () => {
 
-        it('container string is null', () => {
-            const result: Container[] = converter.convertList(null);
+        it('containers string is null', () => {
+            const result: Container[] = converter.strToContainers(null);
 
             expect(result).toEqual([]);
         });
@@ -64,7 +64,7 @@ describe('ContainerConverter', () => {
                 new Container('10554ce91a88', 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Up 11 minutes', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', true),
             ];
 
-            const result: Container[] = converter.convertList(containersStr);
+            const result: Container[] = converter.strToContainers(containersStr);
 
             expect(result).toEqual(expectedResult);
         });

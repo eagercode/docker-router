@@ -2,7 +2,7 @@ import Container from '../model/Container';
 
 export default class ContainerConverter {
 
-    convertOne(headerStr: string, containerStr: string): Container {
+    strToContainer(headerStr: string, containerStr: string): Container {
         if (headerStr && containerStr) {
             const args: string[] = this.convertContainerStrToArray(headerStr, containerStr);
             const isActive: boolean = args[4] ? args[4].indexOf('Up') > -1 : false;
@@ -12,10 +12,10 @@ export default class ContainerConverter {
         }
     }
 
-    convertList(containersStr: string): Container[] {
+    strToContainers(containersStr: string): Container[] {
         if (containersStr) {
             const containers: string[] = containersStr.split('\n');
-            return containers.slice(1, -1).map((container: string): Container => this.convertOne(containers[0], container));
+            return containers.slice(1, -1).map((container: string): Container => this.strToContainer(containers[0], container));
         } else {
             return [];
         }

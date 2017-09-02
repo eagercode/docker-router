@@ -18,7 +18,7 @@ export default class DockerService {
     private getContainers(command: string): Promise<Container[]> {
         return new Promise<Container[]>((resolve: (containers: Container[]) => void, reject: (error: string) => void): void => {
             this.cliService.exec(command)
-                .then((result: string): void => resolve(this.containerConverter.convertList(result)))
+                .then((result: string): void => resolve(this.containerConverter.strToContainers(result)))
                 .catch((error: string): void => reject(error));
         });
     }
