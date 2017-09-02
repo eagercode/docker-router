@@ -11,13 +11,12 @@ export default class VirtualHostService {
         }
     }
 
-    add(virtualHost: VirtualHost): Promise<boolean> {
-        if (!this.isValid(virtualHost)) {
+    add(vHost: VirtualHost): Promise<boolean> {
+        if (!this.isValid(vHost)) {
             return Promise.resolve(false);
         }
 
-        const command: string = 'sed -i -- \'s@#v_hosts@#v_hosts\\n\\n' + this.getDescription(virtualHost) +
-            '@g\' ' + Constants.ROUTER_CONFIG_FILE;
+        const command: string = `sed -i -- 's@#v_hosts@#v_hosts\\n\\n${this.getDescription(vHost)}@g' ${Constants.ROUTER_CONFIG_FILE}`;
         return this.cliService.exec(command)
             .then(() => true)
             .catch((err: string) => {
@@ -26,12 +25,12 @@ export default class VirtualHostService {
             });
     }
 
-    remove(virtualHost: VirtualHost): Promise<boolean> {
-        if (!virtualHost || !virtualHost.id) {
+    remove(vHost: VirtualHost): Promise<boolean> {
+        if (!vHost || !vHost.id) {
             return Promise.resolve(false);
         }
 
-        const command: string = `sed -i -- \'/^    #id=${virtualHost.id}/,/^    #end/{d}\' ${Constants.ROUTER_CONFIG_FILE}`;
+        const command: string = `sed -i -- '/^    #id=${vHost.id}/,/^    #end/{d}' ${Constants.ROUTER_CONFIG_FILE}`;
         return this.cliService.exec(command)
             .then(() => true)
             .catch((err: string) => {
@@ -40,19 +39,19 @@ export default class VirtualHostService {
             });
     }
 
-    getDescription(virtualHost: VirtualHost): string {
-        if (!this.isValid(virtualHost)) {
+    getDescription(vHost: VirtualHost): string {
+        if (!this.isValid(vHost)) {
             return '';
         }
 
-        return '    #id=' + virtualHost.id + '\\n' +
+        return '    #id=' + vHost.id + '\\n' +
             '    upstream localhost {\\n' +
-            '        server ' + virtualHost.ip + ';\\n' +
+            '        server ' + vHost.ip + ';\\n' +
             '    }\\n\\n' +
             '    server {\\n' +
-            '        server_name ' + this.getServerName(virtualHost.address) + ';\\n\\n' +
+            '        server_name ' + this.getServerName(vHost.address) + ';\\n\\n' +
             '        location / {\\n' +
-            '            proxy_pass         ' + this.removeLastForwardSlash(virtualHost.address) + ';\\n' +
+            '            proxy_pass         ' + this.removeLastForwardSlash(vHost.address) + ';\\n' +
             '            proxy_redirect     off;\\n' +
             '            proxy_set_header   Host $host;\\n' +
             '            proxy_set_header   X-Real-IP $remote_addr;\\n' +

@@ -35,7 +35,6 @@ describe('VirtualHostService', () => {
         });
 
         it('virtual host must be defined', () => {
-            sinon.stub(cliService, 'exec');
             let virtualHost: VirtualHost;
 
             let result = service.add(virtualHost);
@@ -72,11 +71,31 @@ describe('VirtualHostService', () => {
     describe('remove', () => {
 
         it('virtual host should be removed', () => {
+            const vHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com');
+            const stub: SinonStub = sinon.stub(cliService, 'exec');
+            stub.returns(Promise.resolve(true));
+            const expectedCommand: string = `sed -i -- '/^    #id=${vHost.id}/,/^    #end/{d}' ${Constants.ROUTER_CONFIG_FILE}`;
+            const expectedResult = Promise.resolve(true);
 
+            const result = service.remove(vHost);
+
+            expect(result).toEqual(expectedResult);
+            sinon.assert.calledWith(stub, expectedCommand);
         });
 
         it('virtual host id should be required', () => {
+            let vHost: VirtualHost;
+            const expectedResult = Promise.resolve(false);
 
+            let result = service.remove(vHost);
+
+            expect(result).toEqual(expectedResult);
+
+            vHost = new VirtualHost(null, '127.0.0.1', 'http://address.com');
+
+            result = service.remove(vHost);
+
+            expect(result).toEqual(expectedResult);
         });
     });
 
