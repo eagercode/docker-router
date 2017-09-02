@@ -1,9 +1,9 @@
 import { SinonStub } from 'sinon';
 
 import CliService from '../../../src/services/CliService';
+import Constants from '../../../src/common/Constants';
 import VirtualHost from '../../../src/model/VirtualHost';
 import VirtualHostService from '../../../src/services/VirtualHostService';
-import Constants from '../../../src/common/Constants';
 
 const sinon = require('sinon');
 
@@ -96,6 +96,116 @@ describe('VirtualHostService', () => {
             result = service.remove(vHost);
 
             expect(result).toEqual(expectedResult);
+        });
+    });
+
+    describe('load', () => {
+        it('virtual hosts should be loaded', () => {
+            const expectedCommand: string = `sed -e '/^    #id=/,/^    #end/!d' ${Constants.ROUTER_CONFIG_FILE}`;
+            const stub: SinonStub = sinon.stub(cliService, 'exec');
+            stub.returns(Promise.resolve(`
+    #id=0509b6c18de7
+    upstream localhost {
+        server 10.11.12.13;
+    }
+
+    server {
+        server_name url.org;
+
+        location / {
+            proxy_pass         https://url.org;
+            proxy_redirect     off;
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header   X-Forwarded-Host $server_name;
+        }
+    }
+    #end
+    #id=5771cb594cf6
+    upstream localhost {
+        server 127.0.0.1;
+    }
+
+    server {
+        server_name test.env.eu;
+
+        location / {
+            proxy_pass         http://test.env.eu;
+            proxy_redirect     off;
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header   X-Forwarded-Host $server_name;
+        }
+    }
+    #end
+    #id=3549d4f07au3
+    upstream localhost {
+        server 192.168.1.124;
+    }
+
+    server {
+        server_name intranet;
+
+        location / {
+            proxy_pass         http://intranet;
+            proxy_redirect     off;
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header   X-Forwarded-Host $server_name;
+        }
+    }
+    #end`));
+            const expectedResult: VirtualHost[] = [
+                new VirtualHost('0509b6c18de7', '10.11.12.13', 'https://url.org'),
+                new VirtualHost('5771cb594cf6', '127.0.0.1', 'http://test.env.eu'),
+                new VirtualHost('3549d4f07au3', '192.168.1.124', 'http://intranet'),
+            ];
+
+            service.load();
+
+            sinon.assert.calledWith(stub, expectedCommand);
+            expect(service.getAll()).toEqual(Promise.resolve(expectedResult));
+        });
+
+        it('virtual hosts str should not be required', () => {
+            const stub: SinonStub = sinon.stub(cliService, 'exec');
+            stub.returns(Promise.resolve(null));
+
+            service.load();
+
+            expect(service.getAll()).toEqual(Promise.resolve([]));
+
+            stub.returns(Promise.resolve(''));
+
+            service.load();
+
+            expect(service.getAll()).toEqual(Promise.resolve([]));
+
+
+            stub.returns(Promise.resolve(`
+    upstream localhost {
+        server 192.168.1.124;
+    }
+
+    server {
+        server_name intranet;
+
+        location / {
+            proxy_pass         http://intranet;
+            proxy_redirect     off;
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header   X-Forwarded-Host $server_name;
+        }
+    }`));
+
+            service.load();
+
+            expect(service.getAll()).toEqual(Promise.resolve([]));
         });
     });
 

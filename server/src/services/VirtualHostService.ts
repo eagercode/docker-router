@@ -11,6 +11,10 @@ export default class VirtualHostService {
         }
     }
 
+    getAll(): Promise<VirtualHost[]> {
+        return Promise.resolve(this.virtualHosts);
+    }
+
     add(vHost: VirtualHost): Promise<boolean> {
         if (!this.isValid(vHost)) {
             return Promise.resolve(false);
@@ -62,6 +66,33 @@ export default class VirtualHostService {
             '    #end';
     }
 
+    load(): void {
+        const command: string = `sed -e '/^    #id=/,/^    #end/!d' ${Constants.ROUTER_CONFIG_FILE}`;
+
+        this.cliService.exec(command)
+            .then((vHostsStr: string) => this.virtualHosts.push(...this.parseVirtualHosts(vHostsStr)));
+    }
+
+    private parseVirtualHosts(vHostsStr: string): VirtualHost[] {
+        if (!vHostsStr) {
+            return [];
+        }
+
+        return vHostsStr.split('    #end').filter((item: string): boolean => item ? true : false).map(this.parseVirtualHost);
+    }
+
+    private parseVirtualHost(vHostStr: string): VirtualHost {
+        if (!vHostStr) {
+            return null;
+        }
+
+        const id = vHostStr.substring(vHostStr.indexOf('#id=') + 4, vHostStr.indexOf('upstream') - 5);
+        const ip = vHostStr.substring(vHostStr.indexOf('server ') + 7, vHostStr.indexOf('server {') - 13);
+        const address = vHostStr.substring(vHostStr.indexOf('proxy_pass         ') + 19, vHostStr.indexOf('proxy_redirect') - 14);
+
+        return new VirtualHost(id, ip, address);
+    }
+
     private isValid(vHost: VirtualHost): boolean {
         return vHost && vHost.id && vHost.ip && vHost.address ? true : false;
     }
@@ -80,9 +111,5 @@ export default class VirtualHostService {
         }
 
         return urlAddress[urlAddress.length - 1] === '/' ? urlAddress.substring(0, urlAddress.length - 1) : urlAddress;
-    }
-
-    private load(): void {
-
     }
 }
