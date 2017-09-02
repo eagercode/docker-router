@@ -11,12 +11,12 @@ export default class VirtualHostService {
         }
     }
 
-    addVirtualHost(virtualHost: VirtualHost): Promise<boolean> {
+    add(virtualHost: VirtualHost): Promise<boolean> {
         if (!this.isValid(virtualHost)) {
             return Promise.resolve(false);
         }
 
-        const command: string = 'sed -i -- \'s@#v_hosts@#v_hosts\\n\\n' + this.getVirtualHostDescription(virtualHost) +
+        const command: string = 'sed -i -- \'s@#v_hosts@#v_hosts\\n\\n' + this.getDescription(virtualHost) +
             '@g\' ' + Constants.ROUTER_CONFIG_FILE;
         return this.cliService.exec(command)
             .then(() => true)
@@ -26,7 +26,21 @@ export default class VirtualHostService {
             });
     }
 
-    getVirtualHostDescription(virtualHost: VirtualHost): string {
+    remove(virtualHost: VirtualHost): Promise<boolean> {
+        if (!virtualHost || !virtualHost.id) {
+            return Promise.resolve(false);
+        }
+
+        const command: string = `sed -i -- \'/^    #id=${virtualHost.id}/,/^    #end/{d}\' ${Constants.ROUTER_CONFIG_FILE}`;
+        return this.cliService.exec(command)
+            .then(() => true)
+            .catch((err: string) => {
+                console.error(err);
+                return false;
+            });
+    }
+
+    getDescription(virtualHost: VirtualHost): string {
         if (!this.isValid(virtualHost)) {
             return '';
         }
