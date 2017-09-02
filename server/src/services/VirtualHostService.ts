@@ -54,7 +54,7 @@ export default class VirtualHostService {
             return result;
         }
 
-        vHosts.forEach((vHost: VirtualHost) => result[vHost.id] = vHost);
+        vHosts.filter((vHost: VirtualHost) => !!vHost).forEach((vHost: VirtualHost) => result[vHost.id] = vHost);
 
         return result;
     }

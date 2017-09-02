@@ -1,5 +1,3 @@
-import VirtualHost from './VirtualHost';
-
 export default class Container {
 
     constructor(public id?: string,
@@ -10,6 +8,7 @@ export default class Container {
                 public ports?: string,
                 public name?: string,
                 public isActive?: boolean,
-                public vHost?: VirtualHost) {
+                public ip?: string,
+                public address?: string) {
     }
 }

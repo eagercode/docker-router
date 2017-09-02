@@ -21,7 +21,7 @@ describe('VirtualHostService', () => {
     });
 
     describe('getAll', () => {
-        it('virtual hosts should be loaded', () => {
+        it('virtual hosts should be loaded', (done: DoneFn) => {
             const expectedCommand: string = `sed -e '/^    #id=/,/^    #end/!d' ${Constants.ROUTER_CONFIG_FILE}`;
             const stub: SinonStub = sinon.stub(cliService, 'exec');
             stub.returns(Promise.resolve(`
@@ -86,23 +86,29 @@ describe('VirtualHostService', () => {
             };
 
             service.getAll()
-                .then((vHosts: { [key: string]: VirtualHost }) => expect(vHosts).toEqual(expectedResult));
+                .then((vHosts: { [key: string]: VirtualHost }) => {
+                    expect(vHosts).toEqual(expectedResult);
+                    done();
+                })
+                .catch((err: string) => done.fail(err));
 
             sinon.assert.calledWith(stub, expectedCommand);
         });
 
-        it('virtual hosts str might be empty or not complete', () => {
+        it('virtual hosts str is null', (done: DoneFn) => {
             const stub: SinonStub = sinon.stub(cliService, 'exec');
             stub.returns(Promise.resolve(null));
 
             service.getAll()
-                .then((vHosts: { [key: string]: VirtualHost }) => expect(vHosts).toEqual({}));
+                .then((vHosts: { [key: string]: VirtualHost }) => {
+                    expect(vHosts).toEqual({});
+                    done();
+                })
+                .catch((err: string) => done.fail(err));
+        });
 
-            stub.returns(Promise.resolve(''));
-
-            service.getAll()
-                .then((vHosts: { [key: string]: VirtualHost }) => expect(vHosts).toEqual({}));
-
+        it('virtual hosts str is incomplete', (done: DoneFn) => {
+            const stub: SinonStub = sinon.stub(cliService, 'exec');
             stub.returns(Promise.resolve(`
     upstream localhost {
         server 192.168.1.124;
@@ -122,7 +128,11 @@ describe('VirtualHostService', () => {
     }`));
 
             service.getAll()
-                .then((vHosts: { [key: string]: VirtualHost }) => expect(vHosts).toEqual({}));
+                .then((vHosts: { [key: string]: VirtualHost }) => {
+                    expect(vHosts).toEqual({});
+                    done();
+                })
+                .catch((err: string) => done.fail(err));
         });
     });
 
