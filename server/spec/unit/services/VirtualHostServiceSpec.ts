@@ -3,6 +3,7 @@ import { SinonStub } from 'sinon';
 import CliService from '../../../src/services/CliService';
 import Constants from '../../../src/common/Constants';
 import VirtualHost from '../../../src/model/VirtualHost';
+import VirtualHostConverter from '../../../src/converters/VirtualHostConverter';
 import VirtualHostService from '../../../src/services/VirtualHostService';
 
 const sinon = require('sinon');
@@ -10,19 +11,21 @@ const sinon = require('sinon');
 describe('VirtualHostService', () => {
 
     let cliService: CliService;
+    let converter: VirtualHostConverter;
     let service: VirtualHostService;
 
     beforeEach(() => {
         cliService = new CliService();
-        service = new VirtualHostService([], cliService);
+        converter = new VirtualHostConverter();
+        service = new VirtualHostService([], cliService, converter);
     });
 
     describe('add', () => {
 
         it('virtual host should be appended to file', () => {
             const vHostDescription: string = 'Virtual Host Description';
-            const descriptionStub: SinonStub = sinon.stub(service, 'getDescription');
-            descriptionStub.returns(vHostDescription);
+            const converterStub: SinonStub = sinon.stub(converter, 'virtualHostToStr');
+            converterStub.returns(vHostDescription);
             const execStub: SinonStub = sinon.stub(cliService, 'exec');
             execStub.returns(Promise.resolve(true));
             const virtualHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com');
@@ -170,7 +173,7 @@ describe('VirtualHostService', () => {
             expect(service.getAll()).toEqual(Promise.resolve(expectedResult));
         });
 
-        it('virtual hosts str should not be required', () => {
+        it('virtual hosts str might be empty or not complete', () => {
             const stub: SinonStub = sinon.stub(cliService, 'exec');
             stub.returns(Promise.resolve(null));
 
@@ -206,73 +209,6 @@ describe('VirtualHostService', () => {
             service.load();
 
             expect(service.getAll()).toEqual(Promise.resolve([]));
-        });
-    });
-
-    describe('getDescription', () => {
-
-        it('description should be formatted', () => {
-            const vHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com');
-            const expectedResult: string = '    #id=e4ef2b5b9f98\\n' +
-                '    upstream localhost {\\n' +
-                '        server 10.0.10.225;\\n' +
-                '    }\\n' +
-                '\\n' +
-                '    server {\\n' +
-                '        server_name test-address.com;\\n' +
-                '\\n' +
-                '        location / {\\n' +
-                '            proxy_pass         http://test-address.com;\\n' +
-                '            proxy_redirect     off;\\n' +
-                '            proxy_set_header   Host $host;\\n' +
-                '            proxy_set_header   X-Real-IP $remote_addr;\\n' +
-                '            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;\\n' +
-                '            proxy_set_header   X-Forwarded-Host $server_name;\\n' +
-                '        }\\n' +
-                '    }\\n' +
-                '    #end';
-
-            let result: string = service.getDescription(vHost);
-
-            expect(result).toBe(expectedResult);
-
-            vHost.address += '/';
-
-            result = service.getDescription(vHost);
-
-            expect(result).toBe(expectedResult);
-        });
-
-        it('virtual host or any field is undefined', () => {
-            let vHost: VirtualHost;
-
-            let result: string = service.getDescription(vHost);
-
-            expect(result).toBe('');
-
-            vHost = new VirtualHost();
-
-            result = service.getDescription(vHost);
-
-            expect(result).toBe('');
-
-            vHost.address = 'http://test-address.com';
-
-            result = service.getDescription(vHost);
-
-            expect(result).toBe('');
-
-            vHost.ip = '10.0.10.225';
-
-            result = service.getDescription(vHost);
-
-            expect(result).toBe('');
-
-            delete vHost.address;
-
-            result = service.getDescription(vHost);
-
-            expect(result).toBe('');
         });
     });
 });
