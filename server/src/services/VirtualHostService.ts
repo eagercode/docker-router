@@ -5,23 +5,18 @@ import VirtualHostConverter from '../converters/VirtualHostConverter';
 
 export default class VirtualHostService {
 
-    constructor(private virtualHosts?: VirtualHost[],
-                private cliService: CliService = new CliService(),
+    constructor(private cliService: CliService = new CliService(),
                 private virtualHostConverter: VirtualHostConverter = new VirtualHostConverter()) {
-        if (!virtualHosts) {
-            this.load();
-        }
     }
 
-    load(): void {
+    getAll(): Promise<{ [key: string]: VirtualHost }> {
         const command: string = `sed -e '/^    #id=/,/^    #end/!d' ${Constants.ROUTER_CONFIG_FILE}`;
 
-        this.cliService.exec(command)
-            .then((vHostsStr: string) => this.virtualHosts.push(...this.virtualHostConverter.strToVirtualHosts(vHostsStr)));
-    }
-
-    getAll(): Promise<VirtualHost[]> {
-        return Promise.resolve(this.virtualHosts);
+        return new Promise((resolve: (result: { [id: string]: VirtualHost }) => void, reject: (err: string) => void) => {
+            this.cliService.exec(command)
+                .then((vHostsStr: string) => resolve(this.getVirtualHostsMap(this.virtualHostConverter.strToVirtualHosts(vHostsStr))))
+                .catch((err: string) => reject(err));
+        });
     }
 
     add(vHost: VirtualHost): Promise<boolean> {
@@ -50,5 +45,17 @@ export default class VirtualHostService {
                 console.error(err);
                 return false;
             });
+    }
+
+    private getVirtualHostsMap(vHosts: VirtualHost[]): { [id: string]: VirtualHost } {
+        const result: { [id: string]: VirtualHost } = {};
+
+        if (!vHosts) {
+            return result;
+        }
+
+        vHosts.forEach((vHost: VirtualHost) => result[vHost.id] = vHost);
+
+        return result;
     }
 }

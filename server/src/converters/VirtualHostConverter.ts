@@ -3,7 +3,7 @@ import VirtualHost from '../model/VirtualHost';
 export default class VirtualHostConverter {
 
     strToVirtualHost(str: string): VirtualHost {
-        if (!str) {
+        if (!str || str.indexOf('#id=') === -1 || str.indexOf('server ') === -1 || str.indexOf('proxy_pass         ') === -1) {
             return null;
         }
 

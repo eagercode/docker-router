@@ -55,9 +55,33 @@ describe('VirtualHostConverter', () => {
 
             expect(result).toBeNull();
         });
+
+        it(`incomplete string shouldn't be converted`, () => {
+            const vHost: string = `
+    upstream localhost {
+        server 192.168.1.124;
+    }
+
+    server {
+        server_name intranet;
+
+        location / {
+            proxy_pass         http://intranet;
+            proxy_redirect     off;
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header   X-Forwarded-Host $server_name;
+        }
+    }`;
+
+            const result = converter.strToVirtualHost(vHost);
+
+            expect(result).toBeNull();
+        });
     });
 
-    describe('strToVirtualHost', () => {
+    describe('strToVirtualHosts', () => {
 
         it('string should be converted to VirtualHosts', () => {
             const vHostsStr: string = `
