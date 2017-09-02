@@ -4,4 +4,6 @@ export default class Constants {
     static PROD_SERVER_PORT: number = 80;
     static PUBLIC_DIR: string = '../public';
     static REST_API_URL_PREFIX: string = '/api';
+
+    static ROUTER_CONFIG_FILE: string = '/opt/router/nginx.conf';
 }

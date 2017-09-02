@@ -1,4 +1,5 @@
 import CliService from './CliService';
+import Constants from '../common/Constants';
 import VirtualHost from '../model/VirtualHost';
 
 export default class VirtualHostService {
@@ -11,30 +12,45 @@ export default class VirtualHostService {
     }
 
     addVirtualHost(virtualHost: VirtualHost): Promise<boolean> {
-        return Promise.resolve(true);
+        if (!this.isValid(virtualHost)) {
+            return Promise.resolve(false);
+        }
+
+        const command: string = 'sed -i -- \'s@#v_hosts@#v_hosts\\n\\n' + this.getVirtualHostDescription(virtualHost) +
+            '@g\' ' + Constants.ROUTER_CONFIG_FILE;
+        return this.cliService.exec(command)
+            .then(() => true)
+            .catch((err: string) => {
+                console.error(err);
+                return false;
+            });
     }
 
     getVirtualHostDescription(virtualHost: VirtualHost): string {
-        if (!virtualHost || !virtualHost.address || !virtualHost.ip) {
+        if (!this.isValid(virtualHost)) {
             return '';
         }
 
-        return `    upstream localhost {
-        server ${virtualHost.ip};
+        return '    #id=' + virtualHost.id + '\\n' +
+            '    upstream localhost {\\n' +
+            '        server ' + virtualHost.ip + ';\\n' +
+            '    }\\n\\n' +
+            '    server {\\n' +
+            '        server_name ' + this.getServerName(virtualHost.address) + ';\\n\\n' +
+            '        location / {\\n' +
+            '            proxy_pass         ' + this.removeLastForwardSlash(virtualHost.address) + ';\\n' +
+            '            proxy_redirect     off;\\n' +
+            '            proxy_set_header   Host $host;\\n' +
+            '            proxy_set_header   X-Real-IP $remote_addr;\\n' +
+            '            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;\\n' +
+            '            proxy_set_header   X-Forwarded-Host $server_name;\\n' +
+            '        }\\n' +
+            '    }\\n' +
+            '    #end';
     }
 
-    server {
-        server_name ${this.getServerName(virtualHost.address)};
-
-        location / {
-            proxy_pass         ${this.removeLastForwardSlash(virtualHost.address)};
-            proxy_redirect     off;
-            proxy_set_header   Host $host;
-            proxy_set_header   X-Real-IP $remote_addr;
-            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header   X-Forwarded-Host $server_name;
-        }
-    }`;
+    private isValid(vHost: VirtualHost): boolean {
+        return vHost && vHost.id && vHost.ip && vHost.address ? true : false;
     }
 
     private getServerName(urlAddress: string): string {
