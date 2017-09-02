@@ -1,4 +1,5 @@
 import Container from '../model/Container';
+import VirtualHost from '../model/VirtualHost';
 
 export default class ContainerConverter {
 

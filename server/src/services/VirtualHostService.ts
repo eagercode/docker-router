@@ -33,12 +33,12 @@ export default class VirtualHostService {
             });
     }
 
-    remove(vHost: VirtualHost): Promise<boolean> {
-        if (!vHost || !vHost.id) {
+    remove(id: string): Promise<boolean> {
+        if (!id) {
             return Promise.resolve(false);
         }
 
-        const command: string = `sed -i -- '/^    #id=${vHost.id}/,/^    #end/{d}' ${Constants.ROUTER_CONFIG_FILE}`;
+        const command: string = `sed -i -- '/^    #id=${id}/,/^    #end/{d}' ${Constants.ROUTER_CONFIG_FILE}`;
         return this.cliService.exec(command)
             .then(() => true)
             .catch((err: string) => {

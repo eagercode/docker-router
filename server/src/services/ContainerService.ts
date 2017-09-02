@@ -18,6 +18,16 @@ export default class ContainerService {
         }
     }
 
+    async update(container: Container): Promise<boolean> {
+        if (!container || !container.id) {
+            return Promise.reject('Container or id is undefined');
+        }
+
+        const result = await this.virtualHostService.remove(container.id);
+
+        return this.virtualHostService.add(new VirtualHost(container.id, container.ip, container.address));
+    }
+
     private mergeContainersAndVHosts(containers: Container[], vHosts: { [key: string]: VirtualHost }): Promise<Container[]> {
         containers
             .filter((container: Container): boolean => !!vHosts[container.id])

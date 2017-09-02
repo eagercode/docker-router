@@ -89,4 +89,40 @@ describe('ContainerService', () => {
                 .catch((err: string) => done());
         });
     });
+
+    describe('update', () => {
+
+        it(`container's virtual host should be updated`, (done: DoneFn) => {
+            const removeStub: SinonStub = sinon.stub(virtualHostService, 'remove');
+            removeStub.returns(Promise.resolve(true));
+            sinon.stub(virtualHostService, 'add').returns(Promise.resolve(true));
+            const container: Container = new Container('10554ce91a88', 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Exited (137) 2 months ago', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', false, '127.0.0.1', 'http://test.env.eu');
+
+            const result = service.update(container);
+
+            sinon.assert.calledWith(removeStub, container.id);
+
+            result
+                .then((result: boolean) => result ? done() : done.fail('Error'))
+                .catch((err: string) => done.fail(err));
+        });
+
+        it('container should be required', (done: DoneFn) => {
+            const result = service.update(null);
+
+            result
+                .then(() => done.fail('Error'))
+                .catch((err: string) => done());
+        });
+
+        it(`container's id should be required`, (done: DoneFn) => {
+            const container: Container = new Container(null, 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Exited (137) 2 months ago', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', false, '127.0.0.1', 'http://test.env.eu');
+
+            const result = service.update(container);
+
+            result
+                .then(() => done.fail('Error'))
+                .catch((err: string) => done());
+        });
+    });
 });
