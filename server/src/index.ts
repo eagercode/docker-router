@@ -2,6 +2,7 @@ import { Application, Request, Response } from 'express-serve-static-core';
 
 import Constants from './common/Constants';
 import ContainerController from './controllers/ContainerController';
+import InitializationService from './services/InitializationService';
 
 const path = require('path');
 const express = require('express');
@@ -48,3 +49,5 @@ new ContainerController(app);
 
 app.get('*', (request: Request, response: Response) =>
     response.sendFile(path.resolve(Constants.PUBLIC_DIR, 'index.html')));
+
+new InitializationService().init();
