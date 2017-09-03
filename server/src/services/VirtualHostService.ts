@@ -47,6 +47,15 @@ export default class VirtualHostService {
             });
     }
 
+    async update(vHost: VirtualHost): Promise<boolean> {
+        try {
+            const result = await this.remove(vHost.id);
+            return this.add(vHost);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+
     private getVirtualHostsMap(vHosts: VirtualHost[]): { [id: string]: VirtualHost } {
         const result: { [id: string]: VirtualHost } = {};
 
