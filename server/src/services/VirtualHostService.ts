@@ -57,7 +57,7 @@ export default class VirtualHostService {
         try {
             await this.remove(vHost.id);
             await this.add(vHost);
-            return this.dockerService.restart(Constants.WEB_CONTAINER_NAME);
+            return this.dockerService.restart(Constants.ROUTER_CONTAINER_NAME);
         } catch (err) {
             return Promise.reject(err);
         }
