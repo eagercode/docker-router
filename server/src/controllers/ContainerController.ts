@@ -7,11 +7,12 @@ import ContainerService from '../services/ContainerService';
 export default class ContainerController {
 
     constructor(app: Application,
-                private containerService?: ContainerService) {
+                private containerService: ContainerService = new ContainerService()) {
         const urlPrefix: string = Constants.REST_API_URL_PREFIX + '/container';
 
         if (app) {
             app.get(urlPrefix + '/', this.getAll);
+            app.post(urlPrefix + '/', this.update);
         }
     }
 
