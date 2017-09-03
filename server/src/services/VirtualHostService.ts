@@ -2,10 +2,12 @@ import CliService from './CliService';
 import Constants from '../common/Constants';
 import VirtualHost from '../model/VirtualHost';
 import VirtualHostConverter from '../converters/VirtualHostConverter';
+import DockerService from './DockerService';
 
 export default class VirtualHostService {
 
     constructor(private cliService: CliService = new CliService(),
+                private dockerService: DockerService = new DockerService(),
                 private virtualHostConverter: VirtualHostConverter = new VirtualHostConverter()) {
     }
 
@@ -48,9 +50,14 @@ export default class VirtualHostService {
     }
 
     async update(vHost: VirtualHost): Promise<boolean> {
+        if (!vHost || !vHost.id) {
+            return Promise.reject(false);
+        }
+
         try {
-            const result = await this.remove(vHost.id);
-            return this.add(vHost);
+            await this.remove(vHost.id);
+            await this.add(vHost);
+            return this.dockerService.restart(Constants.WEB_CONTAINER_NAME);
         } catch (err) {
             return Promise.reject(err);
         }

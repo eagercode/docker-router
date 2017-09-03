@@ -5,6 +5,7 @@ import Constants from '../../../src/common/Constants';
 import VirtualHost from '../../../src/model/VirtualHost';
 import VirtualHostConverter from '../../../src/converters/VirtualHostConverter';
 import VirtualHostService from '../../../src/services/VirtualHostService';
+import DockerService from '../../../src/services/DockerService';
 
 const sinon = require('sinon');
 
@@ -12,12 +13,14 @@ describe('VirtualHostService', () => {
 
     let cliService: CliService;
     let converter: VirtualHostConverter;
+    let dockerService: DockerService;
     let service: VirtualHostService;
 
     beforeEach(() => {
         cliService = new CliService();
         converter = new VirtualHostConverter();
-        service = new VirtualHostService(cliService, converter);
+        dockerService = new DockerService();
+        service = new VirtualHostService(cliService, dockerService, converter);
     });
 
     describe('getAll', () => {
@@ -215,6 +218,50 @@ describe('VirtualHostService', () => {
             result = service.remove(id);
 
             expect(result).toEqual(expectedResult);
+        });
+    });
+
+    describe('update', () => {
+
+        it('virtual host should be updated', (done: DoneFn) => {
+            sinon.stub(service, 'add').returns(Promise.resolve(true));
+            const removeStub: SinonStub = sinon.stub(service, 'remove');
+            removeStub.returns(Promise.resolve(true));
+            sinon.stub(dockerService, 'restart').returns(Promise.resolve(true));
+            const virtualHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com');
+
+            const result = service.update(virtualHost);
+
+            sinon.assert.called(removeStub);
+            result
+                .then((val: boolean) => {
+                    if (val) {
+                        done();
+                    } else {
+                        done.fail('Error');
+                    }
+                })
+                .catch((err: string) => done.fail(err));
+        });
+
+        it('virtual host should be required', (done: DoneFn) => {
+            const virtualHost: VirtualHost = null;
+
+            const result = service.update(virtualHost);
+
+            result
+                .then(() => done.fail('Error'))
+                .catch(() => done());
+        });
+
+        it('virtual host id should be required', (done: DoneFn) => {
+            const virtualHost: VirtualHost = new VirtualHost(null, '10.0.10.225', 'http://test-address.com');
+
+            const result = service.update(virtualHost);
+
+            result
+                .then(() => done.fail('Error'))
+                .catch(() => done());
         });
     });
 });

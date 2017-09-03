@@ -65,4 +65,39 @@ describe('DockerService', () => {
             });
         });
     });
+
+    describe('restart', () => {
+
+        it('shell command `docker restart container_name` should be executed', (done: DoneFn) => {
+            const name: string = 'container_name';
+            const command: string = 'docker restart ' + name;
+            const stub: SinonStub = sinon.stub(cliService, 'exec');
+            stub.returns(Promise.resolve(true));
+
+            const result: Promise<boolean> = service.restart(name);
+
+            sinon.assert.calledWith(stub, command);
+            result
+                .then((result: boolean): void => {
+                    if (result) {
+                        done();
+                    } else {
+                        done.fail('Error');
+                    }
+                })
+                .catch((err: string) => done.fail(err));
+        });
+
+        it('name should be required', (done: DoneFn) => {
+            const name: string = null;
+            const stub: SinonStub = sinon.stub(cliService, 'exec');
+            stub.returns(Promise.resolve(true));
+
+            const result: Promise<boolean> = service.restart(name);
+
+            result
+                .then(() => done.fail('Error'))
+                .catch(() => done());
+        });
+    });
 });

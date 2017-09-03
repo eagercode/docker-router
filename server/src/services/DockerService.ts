@@ -15,6 +15,19 @@ export default class DockerService {
         return this.getContainers('docker ps -a');
     }
 
+    restart(name: string): Promise<boolean> {
+        if (!name) {
+            return Promise.reject('Error: name is required');
+        }
+
+        return new Promise((resolve, reject) => {
+            const command: string = 'docker restart ' + name;
+            this.cliService.exec(command)
+                .then(() => resolve(true))
+                .catch((err: string) => reject(err));
+        });
+    }
+
     private getContainers(command: string): Promise<Container[]> {
         return new Promise<Container[]>((resolve: (containers: Container[]) => void, reject: (error: string) => void): void => {
             this.cliService.exec(command)
