@@ -26,7 +26,7 @@ export default class VirtualHostService {
             return Promise.resolve(false);
         }
 
-        const command: string = `sed -i -- 's@#v_hosts@#v_hosts\\n\\n${this.virtualHostConverter.virtualHostToStr(vHost)}@g' ${Constants.ROUTER_CONFIG_FILE}`;
+        const command: string = `sed -i -- 's@#v_hosts@#v_hosts\\n${this.virtualHostConverter.virtualHostToStr(vHost)}@g' ${Constants.ROUTER_CONFIG_FILE}`;
         return this.cliService.exec(command)
             .then(() => true)
             .catch((err: string) => {

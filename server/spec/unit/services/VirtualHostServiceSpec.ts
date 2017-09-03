@@ -148,7 +148,7 @@ describe('VirtualHostService', () => {
             const execStub: SinonStub = sinon.stub(cliService, 'exec');
             execStub.returns(Promise.resolve(true));
             const virtualHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com');
-            const expectedCommand: string = 'sed -i -- \'s@#v_hosts@#v_hosts\\n\\n' + vHostDescription + '@g\' ' + Constants.ROUTER_CONFIG_FILE;
+            const expectedCommand: string = 'sed -i -- \'s@#v_hosts@#v_hosts\\n' + vHostDescription + '@g\' ' + Constants.ROUTER_CONFIG_FILE;
 
             const result = service.add(virtualHost);
 
