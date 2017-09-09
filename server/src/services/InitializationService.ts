@@ -15,7 +15,8 @@ export default class InitializationService {
     async init(): Promise<boolean> {
         try {
             const containers: Container[] = await this.dockerService.ps();
-            return this.virtualHostService.update(new VirtualHost(this.getWebContainerId(containers), this.getIpAddress(), Constants.WEB_CONTAINER_ADDRESS));
+            const vHost: VirtualHost = new VirtualHost(this.getWebContainerId(containers), this.getIpAddress(), Constants.WEB_CONTAINER_ADDRESS);
+            return this.virtualHostService.update(vHost);
         } catch (err) {
             return Promise.reject(err);
         }

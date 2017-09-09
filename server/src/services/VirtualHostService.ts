@@ -1,8 +1,8 @@
 import CliService from './CliService';
 import Constants from '../common/Constants';
+import DockerService from './DockerService';
 import VirtualHost from '../model/VirtualHost';
 import VirtualHostConverter from '../converters/VirtualHostConverter';
-import DockerService from './DockerService';
 
 export default class VirtualHostService {
 
