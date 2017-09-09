@@ -69,17 +69,18 @@ describe('ContainerController', () => {
         });
 
         it('should return error code if update fails', (done: DoneFn) => {
-            const container: Container = new Container('e7b316865c96', '0cde913b8078', '"npm run start-dev"', '4 days ago', 'Exited (127) 4 days ago', '', 'zen_spence', false, '127.0.0.1', 'http://test.env.eu');
+            const container: Container = new Container(null, '0cde913b8078', '"npm run start-dev"', '4 days ago', 'Exited (127) 4 days ago', '', 'zen_spence', false, '127.0.0.1', 'http://test.env.eu');
             const body: string = JSON.stringify(container);
             const request: any = { body };
-            const stub: SinonStub = sinon.stub(containerService, 'update');
-            stub.returns(Promise.resolve(false));
 
-            const sendStatus = (code: number) => {
-                expect(code).toBe(400);
-                done();
+            const status = (code: number) => {
+                expect(code).toBe(500);
+
+                return {
+                    send: () => done(),
+                };
             };
-            const response: any = { sendStatus };
+            const response: any = { status };
 
             controller.update(request, response);
         });

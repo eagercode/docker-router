@@ -66,8 +66,8 @@ describe('ContainerService', () => {
             sinon.assert.called(dockerStub);
             sinon.assert.called(vHostsStub);
             result
-                .then(() => fail('Error should be thrown'))
-                .catch((err: string) => done());
+                .then(() => done.fail('Error should be thrown'))
+                .catch(done);
         });
 
         it('there are no virtual hosts', (done: DoneFn) => {
@@ -85,8 +85,8 @@ describe('ContainerService', () => {
             sinon.assert.called(dockerStub);
             sinon.assert.called(vHostsStub);
             result
-                .then(() => fail('Error should be thrown'))
-                .catch((err: string) => done());
+                .then(() => done.fail('Error should be thrown'))
+                .catch(done);
         });
     });
 
@@ -112,17 +112,17 @@ describe('ContainerService', () => {
 
             result
                 .then(() => done.fail('Error'))
-                .catch((err: string) => done());
+                .catch(done);
         });
 
-        it(`container's id should be required`, (done: DoneFn) => {
-            const container: Container = new Container(null, 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Exited (137) 2 months ago', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', false, '127.0.0.1', 'http://test.env.eu');
+        it(`container's name should be required`, (done: DoneFn) => {
+            const container: Container = new Container('10554ce91a88', 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Exited (137) 2 months ago', '0.0.0.0:8000->8000/tcp', null, false, '127.0.0.1', 'http://test.env.eu');
 
             const result = service.update(container);
 
             result
                 .then(() => done.fail('Error'))
-                .catch((err: string) => done());
+                .catch(done);
         });
     });
 });

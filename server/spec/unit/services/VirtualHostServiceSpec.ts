@@ -28,7 +28,7 @@ describe('VirtualHostService', () => {
             const expectedCommand: string = `sed -e '/^    #id=/,/^    #end/!d' ${Constants.ROUTER_CONFIG_FILE}`;
             const stub: SinonStub = sinon.stub(cliService, 'exec');
             stub.returns(Promise.resolve(`
-    #id=0509b6c18de7
+    #id=0509b6c18de7,name=test_first
     upstream localhost {
         server 10.11.12.13;
     }
@@ -46,7 +46,7 @@ describe('VirtualHostService', () => {
         }
     }
     #end
-    #id=5771cb594cf6
+    #id=5771cb594cf6,name=test_second
     upstream localhost {
         server 127.0.0.1;
     }
@@ -64,7 +64,7 @@ describe('VirtualHostService', () => {
         }
     }
     #end
-    #id=3549d4f07au3
+    #id=3549d4f07au3,name=test_third
     upstream localhost {
         server 192.168.1.124;
     }
@@ -83,9 +83,9 @@ describe('VirtualHostService', () => {
     }
     #end`));
             const expectedResult: { [key: string]: VirtualHost } = {
-                '0509b6c18de7': new VirtualHost('0509b6c18de7', '10.11.12.13', 'https://url.org'),
-                '5771cb594cf6': new VirtualHost('5771cb594cf6', '127.0.0.1', 'http://test.env.eu'),
-                '3549d4f07au3': new VirtualHost('3549d4f07au3', '192.168.1.124', 'http://intranet'),
+                '0509b6c18de7': new VirtualHost('0509b6c18de7', '10.11.12.13', 'https://url.org', 'test_first'),
+                '5771cb594cf6': new VirtualHost('5771cb594cf6', '127.0.0.1', 'http://test.env.eu', 'test_second'),
+                '3549d4f07au3': new VirtualHost('3549d4f07au3', '192.168.1.124', 'http://intranet', 'test_third'),
             };
 
             service.getAll()
@@ -140,84 +140,106 @@ describe('VirtualHostService', () => {
     });
 
     describe('add', () => {
-
-        it('virtual host should be appended to file', () => {
+        it('virtual host should be appended to file', (done: DoneFn) => {
             const vHostDescription: string = 'Virtual Host Description';
             const converterStub: SinonStub = sinon.stub(converter, 'virtualHostToStr');
             converterStub.returns(vHostDescription);
             const execStub: SinonStub = sinon.stub(cliService, 'exec');
             execStub.returns(Promise.resolve(true));
-            const virtualHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com');
+            const vHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com', 'test_name');
             const expectedCommand: string = 'sed -i -- \'s@#v_hosts@#v_hosts\\n' + vHostDescription + '@g\' ' + Constants.ROUTER_CONFIG_FILE;
 
-            const result = service.add(virtualHost);
+            const result = service.add(vHost);
 
-            expect(result).toEqual(Promise.resolve(true));
             sinon.assert.calledWith(execStub, expectedCommand);
+            result.then((value: boolean) => {
+                expect(value).toBe(true);
+                done();
+            });
         });
 
-        it('virtual host must be defined', () => {
-            let virtualHost: VirtualHost;
+        it('virtual host must be defined', (done: DoneFn) => {
+            const result = service.add(null);
 
-            let result = service.add(virtualHost);
+            result
+                .then(() => done.fail())
+                .catch(done);
+        });
 
-            expect(result).toEqual(Promise.resolve(false));
+        it('virtual host id must be defined', (done: DoneFn) => {
+            const vHost: VirtualHost = new VirtualHost(null, '127.0.0.1', 'http://eager-code.eu', 'eager_code');
 
-            virtualHost = null;
+            const result = service.add(vHost);
 
-            result = service.add(virtualHost);
+            result
+                .then(() => done.fail())
+                .catch(done);
+        });
 
-            expect(result).toEqual(Promise.resolve(false));
+        it('virtual host name must be defined', (done: DoneFn) => {
+            const vHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '127.0.0.1', 'http://eager-code.eu');
 
-            virtualHost = new VirtualHost('id');
+            const result = service.add(vHost);
 
-            result = service.add(virtualHost);
-
-            expect(result).toEqual(Promise.resolve(false));
-
-            virtualHost.address = 'address';
-
-            result = service.add(virtualHost);
-
-            expect(result).toEqual(Promise.resolve(false));
-
-            delete virtualHost.id;
-            virtualHost.ip = 'ip';
-
-            result = service.add(virtualHost);
-
-            expect(result).toEqual(Promise.resolve(false));
+            result
+                .then(() => done.fail())
+                .catch(done);
         });
     });
 
     describe('remove', () => {
 
-        it('virtual host should be removed', () => {
+        it('virtual host should be removed', (done: DoneFn) => {
             const id: string = 'e4ef2b5b9f98';
             const stub: SinonStub = sinon.stub(cliService, 'exec');
             stub.returns(Promise.resolve(true));
             const expectedCommand: string = `sed -i -- '/^    #id=${id}/,/^    #end/{d}' ${Constants.ROUTER_CONFIG_FILE}`;
-            const expectedResult = Promise.resolve(true);
 
             const result = service.remove(id);
 
-            expect(result).toEqual(expectedResult);
             sinon.assert.calledWith(stub, expectedCommand);
+            result
+                .then((value: boolean) => {
+                    expect(value).toBe(true);
+                    done();
+                })
+                .catch((error: string) => done.fail(error));
         });
 
-        it('id should be required', () => {
-            let id: string;
-            const expectedResult = Promise.resolve(false);
+        it('id should be required', (done: DoneFn) => {
+            const result = service.remove(null);
 
-            let result = service.remove(id);
+            result
+                .then(() => done.fail())
+                .catch(done);
+        });
+    });
 
-            expect(result).toEqual(expectedResult);
+    describe('removeByName', () => {
 
-            id = null;
+        it('virtual host should be removed', (done: DoneFn) => {
+            const name: string = 'eager_code';
+            const stub: SinonStub = sinon.stub(cliService, 'exec');
+            stub.returns(Promise.resolve(true));
+            const expectedCommand: string = `sed -i -- '/,name=${name}/,/^    #end/{d}' ${Constants.ROUTER_CONFIG_FILE}`;
 
-            result = service.remove(id);
+            const result = service.removeByName(name);
 
-            expect(result).toEqual(expectedResult);
+            sinon.assert.calledWith(stub, expectedCommand);
+            result
+                .then((value: boolean) => {
+                    expect(value).toBe(true);
+                    done();
+                })
+                .catch((error: string) => done.fail(error));
+        });
+
+        it('name should be required', (done: DoneFn) => {
+            const result = service.removeByName(null);
+
+            result
+                .then(() => done.fail())
+                .catch(done);
         });
     });
 
@@ -228,9 +250,9 @@ describe('VirtualHostService', () => {
             const removeStub: SinonStub = sinon.stub(service, 'remove');
             removeStub.returns(Promise.resolve(true));
             sinon.stub(dockerService, 'restart').returns(Promise.resolve(true));
-            const virtualHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com');
+            const vHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com', 'eager_code');
 
-            const result = service.update(virtualHost);
+            const result = service.update(vHost);
 
             sinon.assert.called(removeStub);
             result
@@ -245,23 +267,33 @@ describe('VirtualHostService', () => {
         });
 
         it('virtual host should be required', (done: DoneFn) => {
-            const virtualHost: VirtualHost = null;
+            const vHost: VirtualHost = null;
 
-            const result = service.update(virtualHost);
+            const result = service.update(vHost);
 
             result
                 .then(() => done.fail('Error'))
-                .catch(() => done());
+                .catch(done);
         });
 
         it('virtual host id should be required', (done: DoneFn) => {
-            const virtualHost: VirtualHost = new VirtualHost(null, '10.0.10.225', 'http://test-address.com');
+            const vHost: VirtualHost = new VirtualHost(null, '10.0.10.225', 'http://test-address.com', 'eager_code');
 
-            const result = service.update(virtualHost);
+            const result = service.update(vHost);
 
             result
                 .then(() => done.fail('Error'))
-                .catch(() => done());
+                .catch(done);
+        });
+
+        it('virtual host name should be required', (done: DoneFn) => {
+            const vHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com');
+
+            const result = service.update(vHost);
+
+            result
+                .then(() => done.fail('Error'))
+                .catch(done);
         });
     });
 });

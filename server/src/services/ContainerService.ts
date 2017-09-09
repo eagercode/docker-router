@@ -19,11 +19,11 @@ export default class ContainerService {
     }
 
     update(container: Container): Promise<boolean> {
-        if (!container || !container.id) {
+        if (!container || !container.id || !container.name) {
             return Promise.reject('Container or id is undefined');
         }
 
-        return this.virtualHostService.update(new VirtualHost(container.id, container.ip, container.address));
+        return this.virtualHostService.update(new VirtualHost(container.id, container.ip, container.address, container.name));
     }
 
     private mergeContainersAndVHosts(containers: Container[], vHosts: { [key: string]: VirtualHost }): Promise<Container[]> {

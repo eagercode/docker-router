@@ -3,15 +3,22 @@ import VirtualHost from '../model/VirtualHost';
 export default class VirtualHostConverter {
 
     strToVirtualHost(str: string): VirtualHost {
-        if (!str || str.indexOf('#id=') === -1 || str.indexOf('server ') === -1 || str.indexOf('proxy_pass         ') === -1) {
+        if (!str ||
+            str.indexOf('#id=') === -1 ||
+            str.indexOf(',name=') === -1 ||
+            str.indexOf('upstream') === -1 ||
+            str.indexOf('server ') === -1 ||
+            str.indexOf('proxy_redirect ') === -1 ||
+            str.indexOf('proxy_pass         ') === -1) {
             return null;
         }
 
-        const id = str.substring(str.indexOf('#id=') + 4, str.indexOf('upstream') - 5);
+        const id = str.substring(str.indexOf('#id=') + 4, str.indexOf(',name='));
+        const name = str.substring(str.indexOf(',name=') + 6, str.indexOf('upstream') - 5);
         const ip = str.substring(str.indexOf('server ') + 7, str.indexOf('server {') - 13);
         const address = str.substring(str.indexOf('proxy_pass         ') + 19, str.indexOf('proxy_redirect') - 14);
 
-        return new VirtualHost(id, ip, address);
+        return new VirtualHost(id, ip, address, name);
     }
 
     strToVirtualHosts(str: string): VirtualHost[] {
@@ -23,26 +30,26 @@ export default class VirtualHostConverter {
     }
 
     virtualHostToStr(vHost: VirtualHost): string {
-        if (!vHost || !vHost.id || !vHost.ip || !vHost.address) {
+        if (!vHost || !vHost.id || !vHost.ip || !vHost.address || !vHost.name) {
             return '';
         }
 
-        return '    #id=' + vHost.id + '\\n' +
-            '    upstream localhost {\\n' +
-            '        server ' + vHost.ip + ';\\n' +
-            '    }\\n\\n' +
-            '    server {\\n' +
-            '        server_name ' + this.getServerName(vHost.address) + ';\\n\\n' +
-            '        location / {\\n' +
-            '            proxy_pass         ' + this.removeLastForwardSlash(vHost.address) + ';\\n' +
-            '            proxy_redirect     off;\\n' +
-            '            proxy_set_header   Host $host;\\n' +
-            '            proxy_set_header   X-Real-IP $remote_addr;\\n' +
-            '            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;\\n' +
-            '            proxy_set_header   X-Forwarded-Host $server_name;\\n' +
-            '        }\\n' +
-            '    }\\n' +
-            '    #end';
+        return `    #id=${vHost.id},name=${vHost.name}\\n` +
+            `    upstream localhost {\\n` +
+            `        server ${vHost.ip};\\n` +
+            `    }\\n\\n` +
+            `    server {\\n` +
+            `        server_name ${this.getServerName(vHost.address)};\\n\\n` +
+            `        location / {\\n` +
+            `            proxy_pass         ${this.removeLastForwardSlash(vHost.address)};\\n` +
+            `            proxy_redirect     off;\\n` +
+            `            proxy_set_header   Host $host;\\n` +
+            `            proxy_set_header   X-Real-IP $remote_addr;\\n` +
+            `            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;\\n` +
+            `            proxy_set_header   X-Forwarded-Host $server_name;\\n` +
+            `        }\\n` +
+            `    }\\n` +
+            `    #end`;
     }
 
     private getServerName(urlAddress: string): string {

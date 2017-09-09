@@ -11,7 +11,7 @@ describe('VirtualHostConverter', () => {
 
         it('string should be converted to VirtualHost', () => {
             const vHostStr: string = `
-    #id=5771cb594cf6
+    #id=5771cb594cf6,name=test_name
     upstream localhost {
         server 127.0.0.1;
     }
@@ -29,7 +29,7 @@ describe('VirtualHostConverter', () => {
         }
     }
     #end`;
-            const expectedResult: VirtualHost = new VirtualHost('5771cb594cf6', '127.0.0.1', 'http://test.env.eu');
+            const expectedResult: VirtualHost = new VirtualHost('5771cb594cf6', '127.0.0.1', 'http://test.env.eu', 'test_name');
 
             const result = converter.strToVirtualHost(vHostStr);
 
@@ -85,7 +85,7 @@ describe('VirtualHostConverter', () => {
 
         it('string should be converted to VirtualHosts', () => {
             const vHostsStr: string = `
-    #id=0509b6c18de7
+    #id=0509b6c18de7,name=test_first
     upstream localhost {
         server 10.11.12.13;
     }
@@ -103,7 +103,7 @@ describe('VirtualHostConverter', () => {
         }
     }
     #end
-    #id=5771cb594cf6
+    #id=5771cb594cf6,name=test_second
     upstream localhost {
         server 127.0.0.1;
     }
@@ -121,7 +121,7 @@ describe('VirtualHostConverter', () => {
         }
     }
     #end
-    #id=3549d4f07au3
+    #id=3549d4f07au3,name=test_third
     upstream localhost {
         server 192.168.1.124;
     }
@@ -140,9 +140,9 @@ describe('VirtualHostConverter', () => {
     }
     #end`;
             const expectedResult: VirtualHost[] = [
-                new VirtualHost('0509b6c18de7', '10.11.12.13', 'https://url.org'),
-                new VirtualHost('5771cb594cf6', '127.0.0.1', 'http://test.env.eu'),
-                new VirtualHost('3549d4f07au3', '192.168.1.124', 'http://intranet'),
+                new VirtualHost('0509b6c18de7', '10.11.12.13', 'https://url.org', 'test_first'),
+                new VirtualHost('5771cb594cf6', '127.0.0.1', 'http://test.env.eu', 'test_second'),
+                new VirtualHost('3549d4f07au3', '192.168.1.124', 'http://intranet', 'test_third'),
             ];
 
             const result = converter.strToVirtualHosts(vHostsStr);
@@ -174,8 +174,8 @@ describe('VirtualHostConverter', () => {
     describe('virtualHostToStr', () => {
 
         it('virtual host should be converted to string', () => {
-            const vHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com');
-            const expectedResult: string = '    #id=e4ef2b5b9f98\\n' +
+            const vHost: VirtualHost = new VirtualHost('e4ef2b5b9f98', '10.0.10.225', 'http://test-address.com', 'test_name');
+            const expectedResult: string = '    #id=e4ef2b5b9f98,name=test_name\\n' +
                 '    upstream localhost {\\n' +
                 '        server 10.0.10.225;\\n' +
                 '    }\\n' +
@@ -230,7 +230,19 @@ describe('VirtualHostConverter', () => {
 
             expect(result).toBe('');
 
-            delete vHost.address;
+            vHost.id = 'e4ef2b5b9f98';
+
+            result = converter.virtualHostToStr(vHost);
+
+            expect(result).toBe('');
+
+            vHost.name = 'test_name';
+
+            result = converter.virtualHostToStr(vHost);
+
+            expect(result).not.toBe('');
+
+            delete vHost.name;
 
             result = converter.virtualHostToStr(vHost);
 

@@ -22,8 +22,8 @@ export default class VirtualHostService {
     }
 
     add(vHost: VirtualHost): Promise<boolean> {
-        if (!vHost || !vHost.id || !vHost.ip || !vHost.address) {
-            return Promise.resolve(false);
+        if (!vHost || !vHost.id || !vHost.ip || !vHost.address || !vHost.name) {
+            return Promise.reject('Virtual host validation failed');
         }
 
         const command: string = `sed -i -- 's@#v_hosts@#v_hosts\\n${this.virtualHostConverter.virtualHostToStr(vHost)}@g' ${Constants.ROUTER_CONFIG_FILE}`;
@@ -37,7 +37,7 @@ export default class VirtualHostService {
 
     remove(id: string): Promise<boolean> {
         if (!id) {
-            return Promise.resolve(false);
+            return Promise.reject('Id is required');
         }
 
         const command: string = `sed -i -- '/^    #id=${id}/,/^    #end/{d}' ${Constants.ROUTER_CONFIG_FILE}`;
@@ -49,13 +49,28 @@ export default class VirtualHostService {
             });
     }
 
+    removeByName(name: string): Promise<boolean> {
+        if (!name) {
+            return Promise.reject('Name is required');
+        }
+
+        const command: string = `sed -i -- '/,name=${name}/,/^    #end/{d}' ${Constants.ROUTER_CONFIG_FILE}`;
+        return this.cliService.exec(command)
+            .then(() => true)
+            .catch((err: string) => {
+                console.error(err);
+                return false;
+            });
+    }
+
     async update(vHost: VirtualHost): Promise<boolean> {
-        if (!vHost || !vHost.id) {
+        if (!vHost || !vHost.id || !vHost.name) {
             return Promise.reject(false);
         }
 
         try {
             await this.remove(vHost.id);
+            await this.removeByName(vHost.name);
             await this.add(vHost);
             return this.dockerService.restart(Constants.ROUTER_CONTAINER_NAME);
         } catch (error) {
