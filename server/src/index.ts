@@ -50,4 +50,4 @@ new ContainerController(app);
 app.get('*', (request: Request, response: Response) =>
     response.sendFile(path.resolve(Constants.PUBLIC_DIR, 'index.html')));
 
-new InitializationService().init();
+new InitializationService().init().catch((error: string) => console.error(error));
