@@ -26,7 +26,7 @@ describe('ContainerService', () => {
                 new Container('e7b316865c96', '0cde913b8078', '"npm run start-dev"', '4 days ago', 'Exited (127) 4 days ago', '', 'zen_spence', false),
                 new Container('10554ce91a88', 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Exited (137) 2 months ago', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', false),
             ];
-            const dockerStub: SinonStub = sinon.stub(dockerService, 'ps');
+            const dockerStub: SinonStub = sinon.stub(dockerService, 'psAll');
             dockerStub.returns(Promise.resolve(containers));
             const vHosts: { [key: string]: VirtualHost } = {
                 '0509b6c18de7': new VirtualHost('0509b6c18de7', '10.11.12.13', 'https://url.org'),
@@ -52,7 +52,7 @@ describe('ContainerService', () => {
         });
 
         it('there are no containers', (done: DoneFn) => {
-            const dockerStub: SinonStub = sinon.stub(dockerService, 'ps');
+            const dockerStub: SinonStub = sinon.stub(dockerService, 'psAll');
             dockerStub.returns(Promise.reject('Error'));
             const vHosts: { [key: string]: VirtualHost } = {
                 '0509b6c18de7': new VirtualHost('0509b6c18de7', '10.11.12.13', 'https://url.org'),
@@ -75,7 +75,7 @@ describe('ContainerService', () => {
                 new Container('e7b316865c96', '0cde913b8078', '"npm run start-dev"', '4 days ago', 'Exited (127) 4 days ago', '', 'zen_spence', false),
                 new Container('10554ce91a88', 'dockerrouter_web', '"npm run start-dev"', '28 hours ago', 'Exited (137) 2 months ago', '0.0.0.0:8000->8000/tcp', 'dockerrouter_web_1', false),
             ];
-            const dockerStub: SinonStub = sinon.stub(dockerService, 'ps');
+            const dockerStub: SinonStub = sinon.stub(dockerService, 'psAll');
             dockerStub.returns(Promise.resolve(containers));
             const vHostsStub: SinonStub = sinon.stub(virtualHostService, 'getAll');
             vHostsStub.rejects('Error');

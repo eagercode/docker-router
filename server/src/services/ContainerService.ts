@@ -11,7 +11,7 @@ export default class ContainerService {
 
     async getAll(): Promise<Container[]> {
         try {
-            const [containers, vHosts] = await Promise.all([this.dockerService.ps(), this.virtualHostService.getAll()]);
+            const [containers, vHosts] = await Promise.all([this.dockerService.psAll(), this.virtualHostService.getAll()]);
             return this.mergeContainersAndVHosts(containers, vHosts);
         } catch (err) {
             return Promise.reject(err);
