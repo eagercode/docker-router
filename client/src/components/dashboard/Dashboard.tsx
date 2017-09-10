@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Container from '../../model/Container';
-import ContainerBox from '../container/ContainerBox';
+import ContainerBox from '../container-box/ContainerBox';
 import Utils from '../../utils/Utils';
 import './Dashboard.css';
 
