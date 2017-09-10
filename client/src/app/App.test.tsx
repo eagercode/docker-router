@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 import { mount, ReactWrapper } from 'enzyme';
 import { getMuiTheme } from 'material-ui/styles';
 import App from './App';
+import AppBar from 'material-ui/AppBar';
 import Dashboard from '../components/dashboard/Dashboard';
 
 describe('<App/>', () => {
@@ -27,7 +28,11 @@ describe('<App/>', () => {
         expect(component).not.toBeNull();
     });
 
-    it('dashboard is a child component', () => {
+    it('AppBar is a child component', () => {
+        expect(component.find(AppBar).length).toBe(1);
+    });
+
+    it('Dashboard is a child component', () => {
         expect(component.find(Dashboard).length).toBe(1);
     });
 });
