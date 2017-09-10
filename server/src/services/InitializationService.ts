@@ -15,19 +15,30 @@ export default class InitializationService {
     async init(): Promise<boolean> {
         try {
             const containers: Container[] = await this.dockerService.ps();
-            const vHost: VirtualHost = new VirtualHost(this.getWebContainerId(containers), this.getIpAddress(), Constants.WEB_CONTAINER_ADDRESS, Constants.WEB_CONTAINER_NAME);
-            return this.virtualHostService.update(vHost);
+            const router: Container = this.getContainerByName(containers, Constants.ROUTER_CONTAINER_NAME);
+
+            if (router && router.isActive) {
+                await this.virtualHostService.update(this.getWebContainerVirtualHost(containers));
+                return this.dockerService.restart(Constants.ROUTER_CONTAINER_NAME);
+            } else {
+                return this.virtualHostService.update(this.getWebContainerVirtualHost(containers));
+            }
         } catch (err) {
             return Promise.reject(err);
         }
     }
 
-    private getIpAddress(): string {
-        return os.networkInterfaces().eth0[0].address;
+    private getContainerByName(containers: Container[], name: string): Container {
+        const filteredContainers = containers.filter((container: Container) => container.name === name);
+        return filteredContainers[0] ? filteredContainers[0] : null;
     }
 
-    private getWebContainerId(containers: Container[]): string {
-        const filteredContainers = containers.filter((container: Container) => container.name === Constants.WEB_CONTAINER_NAME);
-        return filteredContainers[0] ? filteredContainers[0].id : null;
+    private getWebContainerVirtualHost(containers: Container[]): VirtualHost {
+        const webContainer: Container = this.getContainerByName(containers, Constants.WEB_CONTAINER_NAME);
+        return webContainer != null ? new VirtualHost(webContainer.id, this.getIpAddress(), Constants.WEB_CONTAINER_ADDRESS, Constants.WEB_CONTAINER_NAME) : null;
+    }
+
+    private getIpAddress(): string {
+        return os.networkInterfaces().eth0[0].address;
     }
 }
