@@ -1,5 +1,5 @@
 import * as React from 'react';
-import './GitHub.css';
+import Svg from './GitHub.sc';
 
 const path: string = 'M12.007 0C6.12 0 1.1 4.27.157 10.08c-.944 5.813 2.468 11.45 8.054 13.312.19.064.397.033.555-.084.16-.117.25-.304.244-.5v-' +
     '2.042c-3.33.735-4.037-1.56-4.037-1.56-.22-.726-.694-1.35-1.334-1.756-1.096-.75.074-.735.074-.735.773.103 1.454.557 1.846 1.23.694 1.21 2.2' +
@@ -11,9 +11,9 @@ const path: string = 'M12.007 0C6.12 0 1.1 4.27.157 10.08c-.944 5.813 2.468 11.4
 const GitHub = (): JSX.Element => (
     <a href="https://github.com/eagercode/docker-router" target="_blank">
         <span>
-            <svg className="GitHub" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+            <Svg focusable="false" viewBox="0 0 24 24" aria-hidden="true">
                 <path d={path}/>
-            </svg>
+            </Svg>
         </span>
     </a>
 );

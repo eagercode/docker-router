@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ContainerBox/> ContainerBox snapshot 1`] = `
+<styled.div>
+  <Indicator
+    isActive={true}
+  />
+  <List>
+    <ListItem
+      autoGenerateNestedIndicator={true}
+      containerElement="span"
+      disableKeyboardFocus={false}
+      disabled={true}
+      initiallyOpen={false}
+      insetChildren={false}
+      nestedItems={Array []}
+      nestedLevel={0}
+      onKeyboardFocus={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onNestedListToggle={[Function]}
+      onTouchEnd={[Function]}
+      onTouchStart={[Function]}
+      open={null}
+      primaryText="dockerrouter_web_1"
+      primaryTogglesNestedList={false}
+      secondaryText="Container Name"
+      secondaryTextLines={1}
+    />
+    <ListItem
+      autoGenerateNestedIndicator={true}
+      containerElement="span"
+      disableKeyboardFocus={false}
+      disabled={true}
+      initiallyOpen={false}
+      insetChildren={false}
+      nestedItems={Array []}
+      nestedLevel={0}
+      onKeyboardFocus={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onNestedListToggle={[Function]}
+      onTouchEnd={[Function]}
+      onTouchStart={[Function]}
+      open={null}
+      primaryText="dockerrouter_web"
+      primaryTogglesNestedList={false}
+      secondaryText="Image"
+      secondaryTextLines={1}
+    />
+    <ListItem
+      autoGenerateNestedIndicator={true}
+      containerElement="span"
+      disableKeyboardFocus={false}
+      disabled={true}
+      initiallyOpen={false}
+      insetChildren={false}
+      nestedItems={Array []}
+      nestedLevel={0}
+      onKeyboardFocus={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onNestedListToggle={[Function]}
+      onTouchEnd={[Function]}
+      onTouchStart={[Function]}
+      open={null}
+      primaryText="Up 6 seconds"
+      primaryTogglesNestedList={false}
+      secondaryText="Status"
+      secondaryTextLines={1}
+    />
+  </List>
+</styled.div>
+`;
+
+exports[`<ContainerBox/> ContainerBox styled div snapshot 1`] = `
+.c0 {
+  box-shadow: 0 0 4px 2px #ccc;
+  display: inline-block;
+  margin: 10px 2px 10px 2px;
+  position: relative;
+  width: 100%;
+  word-wrap: break-word;
+}
+
+<styled.div>
+  <div
+    className="c0"
+  />
+</styled.div>
+`;

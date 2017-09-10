@@ -2,7 +2,7 @@ import * as React from 'react';
 import { List, ListItem } from 'material-ui';
 import Container from '../../model/Container';
 import Indicator from '../indicator/Indicator';
-import './ContainerBox.css';
+import Div from './ContainerBox.sc';
 
 interface Props {
 
@@ -13,7 +13,7 @@ export default class ContainerBox extends React.Component<Props, {}> {
 
     render(): JSX.Element {
         return (
-            <div className="ContainerBox">
+            <Div>
                 <Indicator isActive={this.props.container.isActive}/>
                 <List>
                     <ListItem
@@ -27,13 +27,13 @@ export default class ContainerBox extends React.Component<Props, {}> {
                         secondaryText="Image"
                     />
                     {this.props.container.status ?
-                    <ListItem
-                        disabled={true}
-                        primaryText={this.props.container.status}
-                        secondaryText="Status"
-                    /> : ''}
+                        <ListItem
+                            disabled={true}
+                            primaryText={this.props.container.status}
+                            secondaryText="Status"
+                        /> : ''}
                 </List>
-            </div>
+            </Div>
         );
     }
 }
