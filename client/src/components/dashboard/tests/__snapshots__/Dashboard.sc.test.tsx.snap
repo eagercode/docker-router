@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Div/> styled dashboard div snapshot 1`] = `
+.c0 {
+  -webkit-column-count: 4;
+  column-count: 4;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 5px 10px 0 10px;
+}
+
+@media only screen and (max-width:62em) {
+  .c0 {
+    -webkit-column-count: 3;
+    column-count: 3;
+  }
+}
+
+@media only screen and (max-width:48em) {
+  .c0 {
+    -webkit-column-count: 2;
+    column-count: 2;
+  }
+}
+
+@media only screen and (max-width:23.5em) {
+  .c0 {
+    -webkit-column-count: 1;
+    column-count: 1;
+  }
+}
+
+<styled.div>
+  <div
+    className="c0"
+  />
+</styled.div>
+`;

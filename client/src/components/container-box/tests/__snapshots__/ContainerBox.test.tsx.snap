@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<ContainerBox/> ContainerBox snapshot 1`] = `
+exports[`<ContainerBox/> container box snapshot 1`] = `
 <styled.div>
   <Indicator
     isActive={true}
@@ -70,22 +70,5 @@ exports[`<ContainerBox/> ContainerBox snapshot 1`] = `
       secondaryTextLines={1}
     />
   </List>
-</styled.div>
-`;
-
-exports[`<ContainerBox/> ContainerBox styled div snapshot 1`] = `
-.c0 {
-  box-shadow: 0 0 4px 2px #ccc;
-  display: inline-block;
-  margin: 10px 2px 10px 2px;
-  position: relative;
-  width: 100%;
-  word-wrap: break-word;
-}
-
-<styled.div>
-  <div
-    className="c0"
-  />
 </styled.div>
 `;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Container from '../../model/Container';
 import ContainerBox from '../container-box/ContainerBox';
+import Div from './Dashboard.sc';
 import Utils from '../../utils/Utils';
-import './Dashboard.css';
 
 interface State {
 
@@ -32,11 +32,11 @@ export default class Dashboard extends React.Component<{}, State> {
 
     render(): JSX.Element {
         return (
-            <div className="Dashboard">
+            <Div>
                 {this.state.containers ? this.state.containers.map((container: Container) =>
                     <ContainerBox key={container.id} container={container}/>
                 ) : ''}
-            </div>
+            </Div>
         );
     }
 }
