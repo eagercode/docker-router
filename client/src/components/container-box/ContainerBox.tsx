@@ -14,7 +14,7 @@ export default class ContainerBox extends React.Component<Props, {}> {
     render(): JSX.Element {
         return (
             <Div>
-                <Indicator isActive={this.props.container.isActive}/>
+                <Indicator isActive={!!this.props.container.isActive}/>
                 <List>
                     <ListItem
                         disabled={true}

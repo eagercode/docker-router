@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Indicator/> active indicator snapshot 1`] = `
+.c0 {
+  color: #4CAF50;
+}
+
+.c0:before {
+  content: " \\25CF";
+  float: right;
+  font-size: 1.5em;
+  right: 3%;
+  position: absolute;
+  top: 0.2em;
+}
+
+<Indicator
+  isActive={true}
+>
+  <styled.span
+    isActive={true}
+  >
+    <span
+      className="c0"
+    />
+  </styled.span>
+</Indicator>
+`;
+
+exports[`<Indicator/> inactive indicator snapshot 1`] = `
+.c0 {
+  color: #E53935;
+}
+
+.c0:before {
+  content: " \\25CF";
+  float: right;
+  font-size: 1.5em;
+  right: 3%;
+  position: absolute;
+  top: 0.2em;
+}
+
+<Indicator
+  isActive={false}
+>
+  <styled.span
+    isActive={false}
+  >
+    <span
+      className="c0"
+    />
+  </styled.span>
+</Indicator>
+`;
